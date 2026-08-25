@@ -5,7 +5,7 @@ import {
   ROUNDS_PER_GAME, RoundResult, STREAK_BONUS_MAX_STEPS, STREAK_BONUS_STEP_PCT,
 } from "../engine/types";
 import {
-  clubById, getRandomChallenge, getRandomQuestion, playerById, resolveRandomDifficulty, teamById,
+  clubById, getRandomChallenge, getRandomQuestion, playerById, resolveRandomDifficulty, shuffle, teamById,
 } from "../engine/engine";
 import Crest from "../ui/Crest";
 import Portrait from "../ui/Portrait";
@@ -26,7 +26,7 @@ function makeRound(mode: Mode, difficulty: DiffKey | "random"): RoundData {
   const d = difficulty === "random" ? resolveRandomDifficulty() : difficulty;
   if (mode === "quiz") {
     const q = getRandomQuestion(d);
-    const order = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
+    const order = shuffle([0, 1, 2, 3]); // Fisher–Yates: uniform answer order
     return {
       difficulty: d,
       question: q,
@@ -35,7 +35,7 @@ function makeRound(mode: Mode, difficulty: DiffKey | "random"): RoundData {
     };
   }
   const ch = getRandomChallenge(mode === "national" ? "national" : "club", d);
-  const ids = [ch.teamId, ...ch.distractorIds].sort(() => Math.random() - 0.5);
+  const ids = shuffle([ch.teamId, ...ch.distractorIds]); // uniform crest order
   return { difficulty: d, challenge: ch, optionIds: ids };
 }
 
