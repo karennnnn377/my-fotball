@@ -74,7 +74,11 @@ export default function GameScreen({
   onMenu: () => void;
 }) {
   const [round, setRound] = useState(0);
-  const [data, setData] = useState<RoundData | null>(null);
+  /* Fixed difficulties seed round 1 synchronously so the roulette card
+     never flashes for a frame (and no extra question is consumed). */
+  const [data, setData] = useState<RoundData | null>(() =>
+    difficulty === "random" ? null : makeRound(mode, difficulty),
+  );
   const [choice, setChoice] = useState<number | null>(null);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
@@ -114,7 +118,7 @@ export default function GameScreen({
       return () => window.clearInterval(iv);
     }
     setSpinDiff(null);
-    setData(makeRound(mode, difficulty));
+    if (round > 0) setData(makeRound(mode, difficulty)); // round 1 was pre-seeded
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [round, mode, difficulty]);
 
