@@ -532,7 +532,7 @@ Anthony Elanga|sweden|man-united,nottingham-forest,newcastle|4|modern|FW
 Erling Haaland|norway|molde,salzburg,dortmund,man-city|1|modern|FW
 Martin Ødegaard|norway|real-madrid,heerenveen,real-sociedad,arsenal|2|modern|MF
 Alexander Sørloth|norway|crystal-palace,leipzig,real-sociedad,villarreal,atletico|4|modern|FW
-Jens Petter Hauge|norway|bodo-glimt,milan,eintracht-frankfurt|4|modern|FW
+Jens Petter Hauge|norway|bodo-glimt,milan,frankfurt|4|modern|FW
 Sander Berge|norway|genk,sheffield-united,fulham|5|modern|MF
 Kristoffer Ajer|norway|celtic,brentford|5|modern|DF
 Jostein Flo|norway|sheffield-united|5|classic|FW
@@ -540,7 +540,7 @@ Tore André Flo|norway|chelsea,rangers|5|modern|FW
 Ole Gunnar Solskjær|norway|molde,man-united|3|modern|FW
 John Carew|norway|rosenborg,valencia,lyon,aston-villa,west-ham|3|modern|FW
 Teemu Pukki|finland|schalke,celtic,norwich|4|modern|FW
-Lukas Hradecky|finland|eintracht-frankfurt,leverkusen|4|modern|GK
+Lukas Hradecky|finland|frankfurt,leverkusen|4|modern|GK
 Gylfi Sigurdsson|iceland|hoffenheim,swansea,tottenham,everton|3|modern|MF
 Jóhann Gudmundsson|iceland|az,burnley|5|modern|FW
 Alfred Finnbogason|iceland|real-sociedad,augsburg|5|modern|FW

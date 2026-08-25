@@ -211,7 +211,7 @@ Abedi Pelé|ghana|marseille,lyon,lille,torino|4|legend|FW
 Tony Yeboah|ghana|frankfurt,leeds|5|classic|FW
 Kevin-Prince Boateng|ghana|tottenham,dortmund,portsmouth,milan,schalke,fiorentina|4|modern|FW
 Mohamed Salah|egypt|basel,chelsea,roma,liverpool|1|modern|FW
-Omar Marmoush|egypt|wolfsburg,stuttgart,eintracht-frankfurt,man-city|2|modern|FW
+Omar Marmoush|egypt|wolfsburg,stuttgart,frankfurt,man-city|2|modern|FW
 Mohamed Elneny|egypt|basel,arsenal,besiktas|4|modern|MF
 Mahmoud Trezeguet|egypt|aston-villa,trabzonspor|4|modern|FW
 Ahmed Hegazi|egypt|west-brom,al-ittihad|5|modern|DF
@@ -319,7 +319,7 @@ Floyd Ayité|togo|bastia,fulham|5|modern|FW
 Kodjo Laba|togo|al-ain|5|modern|FW
 Djené Dakonam|togo|getafe|4|modern|DF
 Mohamed Kallon|sierra-leone|inter,monaco|4|modern|FW
-Kei Kamara|sierra-leone|columbus,dc-united,sporting-kc|4|modern|FW
+Kei Kamara|sierra-leone|columbus-crew,dc-united,sporting-kc|4|modern|FW
 Mustapha Bundu|sierra-leone|anderlecht|5|modern|FW
 Umaru Bangura|sierra-leone|zuerich|5|modern|DF
 Moussa Maâzou|niger|monaco,cska-moscow|5|modern|FW
@@ -330,27 +330,27 @@ Takumi Minamino|japan|salzburg,liverpool,southampton,monaco|3|modern|FW
 Kaoru Mitoma|japan|kawasaki,brighton|2|modern|FW
 Takefusa Kubo|japan|real-madrid,mallorca,real-sociedad|2|modern|FW
 Wataru Endo|japan|stuttgart,liverpool|3|modern|MF
-Ritsu Doan|japan|psv,eintracht-frankfurt,freiburg|4|modern|MF
-Daichi Kamada|japan|eintracht-frankfurt,lazio,crystal-palace|3|modern|MF
+Ritsu Doan|japan|psv,frankfurt,freiburg|4|modern|MF
+Daichi Kamada|japan|frankfurt,lazio,crystal-palace|3|modern|MF
 Takehiro Tomiyasu|japan|bologna,arsenal,ajax|3|modern|DF
 Ko Itakura|japan|groningen,schalke,gladbach,ajax|4|modern|DF
 Hidemasa Morita|japan|sporting|4|modern|MF
 Daizen Maeda|japan|yokohama,celtic|4|modern|FW
 Kyogo Furuhashi|japan|celtic,rennes|4|modern|FW
 Junya Ito|japan|genk,reims|5|modern|FW
-Ao Tanaka|japan|duesseldorf,leeds|4|modern|MF
+Ao Tanaka|japan|fortuna-duesseldorf,leeds|4|modern|MF
 Shunsuke Nakamura|japan|reggina,celtic,espanyol|4|modern|MF
 Keisuke Honda|japan|cska-moscow,milan,pachuca,melbourne-victory|3|modern|MF
 Shinji Kagawa|japan|dortmund,man-united|3|modern|MF
 Shinji Okazaki|japan|stuttgart,mainz,leicester|4|modern|FW
 Maya Yoshida|japan|southampton,sampdoria,schalke,la-galaxy|4|modern|DF
 Yuto Nagatomo|japan|inter,galatasaray,marseille|4|modern|DF
-Makoto Hasebe|japan|wolfsburg,nuernberg,eintracht-frankfurt|4|modern|MF
+Makoto Hasebe|japan|wolfsburg,nuernberg,frankfurt|4|modern|MF
 Hidetoshi Nakata|japan|perugia,roma,parma,fiorentina,bolton|3|modern|MF
 Kazuyoshi Miura|japan|genoa|5|legend|FW
 Shinji Ono|japan|feyenoord|5|modern|MF
 Junichi Inamoto|japan|arsenal,fulham,west-brom,galatasaray|5|modern|MF
-Naohiro Takahara|japan|hamburg,eintracht-frankfurt|5|modern|FW
+Naohiro Takahara|japan|hamburg,frankfurt|5|modern|FW
 Atsuto Uchida|japan|schalke|5|modern|DF
 Eiji Kawashima|japan|standard,metz,strasbourg|5|modern|GK
 Son Heung-min|south-korea|leverkusen,hamburg,tottenham,lafc|1|modern|FW
@@ -374,7 +374,7 @@ Saman Ghoddos|iran|brentford|5|modern|MF
 Ashkan Dejagah|iran|wolfsburg,fulham|5|modern|MF
 Ali Karimi|iran|bayern,schalke|5|modern|MF
 Ali Daei|iran|bayern,hertha,bielefeld|4|modern|FW
-Mehdi Mahdavikia|iran|hamburg,eintracht-frankfurt|5|modern|MF
+Mehdi Mahdavikia|iran|hamburg,frankfurt|5|modern|MF
 Salem Al-Dawsari|saudi-arabia|al-hilal|4|modern|FW
 Almoez Ali|qatar|al-duhail|5|modern|FW
 Akram Afif|qatar|al-sadd|5|modern|FW
@@ -402,14 +402,14 @@ Ri Myong-guk|north-korea||5|modern|GK
 An Yong-hak|north-korea||4|modern|MF
 Musa Al-Taamari|jordan|montpellier|4|modern|FW
 Omar Al Somah|syria|al-ahli|5|modern|FW
-Wessam Abou Ali|palestine|columbus|5|modern|FW
+Wessam Abou Ali|palestine|columbus-crew|5|modern|FW
 Oday Dabbagh|palestine|charleroi|5|modern|FW
 Sunil Chhetri|india|sporting-kc|4|modern|FW
 Hirving Lozano|mexico|psv,napoli|2|modern|FW
 Raúl Jiménez|mexico|atletico,benfica,wolves,fulham|2|modern|FW
 Guillermo Ochoa|mexico|malaga,granada,standard|3|modern|GK
 Andrés Guardado|mexico|deportivo,valencia,levante,betis,psv|3|modern|MF
-Héctor Herrera|mexico|porto,atletico,houston|3|modern|MF
+Héctor Herrera|mexico|porto,atletico,houston-dynamo|3|modern|MF
 Edson Álvarez|mexico|ajax,west-ham|3|modern|MF
 Santiago Giménez|mexico|feyenoord,milan|3|modern|FW
 Chicharito|mexico|man-united,real-madrid,leverkusen,west-ham,sevilla,la-galaxy|2|modern|FW
@@ -417,7 +417,7 @@ Giovani dos Santos|mexico|barcelona,tottenham,galatasaray,villarreal,la-galaxy|4
 Carlos Vela|mexico|arsenal,real-sociedad,lafc|3|modern|FW
 Jesús Corona|mexico|twente,porto,sevilla|4|modern|FW
 Cuauhtémoc Blanco|mexico|valladolid|4|classic|FW
-Rafael Márquez|mexico|monaco,barcelona,ny-red-bulls|3|modern|DF
+Rafael Márquez|mexico|monaco,barcelona,red-bulls|3|modern|DF
 Hugo Sánchez|mexico|atletico,real-madrid|3|classic|FW
 Jorge Campos|mexico|chicago-fire|4|classic|GK
 Jared Borgetti|mexico|bolton|5|modern|FW
@@ -437,7 +437,7 @@ Clint Dempsey|usa|fulham,tottenham,seattle|3|modern|FW
 Tim Howard|usa|man-united,everton|3|modern|GK
 Brad Friedel|usa|liverpool,blackburn,aston-villa,tottenham|4|modern|GK
 Claudio Reyna|usa|leverkusen,wolfsburg,rangers,sunderland,man-city|4|modern|MF
-Brian McBride|usa|fulham,columbus|4|modern|FW
+Brian McBride|usa|fulham,columbus-crew|4|modern|FW
 Zack Steffen|usa|man-city|5|modern|GK
 Matt Turner|usa|arsenal,nottingham-forest|5|modern|GK
 DeAndre Yedlin|usa|tottenham,sunderland,newcastle,galatasaray,inter-miami|4|modern|DF
@@ -447,7 +447,7 @@ Tajon Buchanan|canada|club-brugge,inter,villarreal|4|modern|FW
 Stephen Eustáquio|canada|porto|4|modern|MF
 Cyle Larin|canada|orlando,besiktas,club-brugge,valladolid,mallorca|4|modern|FW
 Alistair Johnston|canada|montreal,celtic|5|modern|DF
-Dwayne De Rosario|canada|houston,san-jose,toronto-fc|5|modern|FW
+Dwayne De Rosario|canada|houston-dynamo,san-jose,toronto-fc|5|modern|FW
 Tomasz Radzinski|canada|everton,fulham,anderlecht|5|modern|FW
 Keylor Navas|costa-rica|saprissa,levante,real-madrid,psg,nottingham-forest|2|modern|GK
 Bryan Ruiz|costa-rica|alajuelense,twente,fulham,psv,sporting,santos|3|modern|FW
@@ -458,7 +458,7 @@ Rolando Fonseca|costa-rica|america-cali,alajuelense|5|modern|FW
 Walter Centeno|costa-rica|saprissa,aek-athens|5|modern|MF
 Michael Umaña|costa-rica|saprissa|5|modern|DF
 Patrick Pemberton|costa-rica|alajuelense|5|modern|GK
-Álvaro Saborío|costa-rica|real-salt-lake,alajuelense|5|modern|FW
+Álvaro Saborío|costa-rica|salt-lake,alajuelense|5|modern|FW
 Felipe Baloy|panama|monterrey,santos-laguna|4|modern|DF
 Blas Pérez|panama|tigres,pachuca,leon|4|modern|FW
 Luis Tejada|panama|toluca,necaxa|4|modern|FW
@@ -481,7 +481,7 @@ Marlon King|jamaica|watford,wigan,birmingham|4|modern|FW
 Jobi McAnuff|jamaica|reading,watford|5|modern|MF
 Theo Robinson|jamaica|derby|5|modern|FW
 Adrian Mariappa|jamaica|watford,crystal-palace,reading|5|modern|DF
-Giles Barnes|jamaica|derby,watford,houston|5|modern|FW
+Giles Barnes|jamaica|derby,watford,houston-dynamo|5|modern|FW
 Joe Gaetjens|haiti||5|legend|FW
 Emmanuel Sanon|haiti||5|legend|FW
 Duckens Nazon|haiti||4|modern|FW
@@ -490,7 +490,7 @@ Derrick Etienne|haiti|red-bulls|4|modern|MF
 Cuco Martina|curacao|southampton,everton,psv|4|modern|DF
 Leandro Bacuna|curacao|aston-villa,reading,cardiff,watford|4|modern|MF
 Vurnon Anita|curacao|ajax,newcastle,leeds|4|modern|MF
-Eloy Room|curacao|vitesse,psv,columbus|5|modern|GK
+Eloy Room|curacao|vitesse,psv,columbus-crew|5|modern|GK
 Shaun Goater|bermuda|man-city,portsmouth,tottenham,reading|4|modern|FW
 Nahki Wells|bermuda|huddersfield,burnley,qpr|4|modern|FW
 Reggie Lambe|bermuda|ipswich|5|modern|MF
@@ -525,7 +525,7 @@ Filippo Berardi|san-marino||5|modern|FW
 Giorgos Karagounis|greece|panathinaikos,inter,benfica,fulham|4|modern|MF
 Kostas Katsouranis|greece|benfica,panathinaikos,paok|5|modern|MF
 Georgios Samaras|greece|man-city,celtic,west-brom|4|modern|FW
-Theofanis Gekas|greece|leverkusen,hertha,eintracht-frankfurt|5|modern|FW
+Theofanis Gekas|greece|leverkusen,hertha,frankfurt|5|modern|FW
 Angelos Charisteas|greece|werder,ajax,feyenoard|4|modern|FW
 Sokratis Papastathopoulos|greece|genoa,werder,dortmund,arsenal,olympiacos|3|modern|DF
 Kostas Manolas|greece|roma,napoli,olympiacos|4|modern|DF

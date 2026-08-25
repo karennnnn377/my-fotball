@@ -41,6 +41,7 @@ hull|Hull City|HUL|England|#F89F1B|#000000|4
 cardiff|Cardiff City|CAR|Wales|#D22630|#1D59AB|3
 swansea|Swansea City|SWA|Wales|#F0F0F0|#000000|4
 charlton|Charlton Athletic|CHA|England|#E03A3E|#F0F0F0|5
+reading|Reading FC|REA|England|#004B9E|#F0F0F0|4
 wimbledon-afc|AFC Wimbledon|WIM|England|#004C9B|#FDE047|5
 millwall|Millwall|MIL|England|#1B3F6B|#F0F0F0|5
 sheffield-wednesday|Sheffield Wednesday|SHW|England|#0057B8|#F0F0F0|4
@@ -132,6 +133,7 @@ kaiserslautern|Kaiserslautern|FCK|Germany|#E30613|#F0F0F0|4
 nuernberg|Nürnberg|FCN|Germany|#B3012C|#F0F0F0|4
 bochum|VfL Bochum|BOC|Germany|#005CA9|#F0F0F0|4
 mainz|Mainz 05|M05|Germany|#C3141E|#F0F0F0|3
+darmstadt|SV Darmstadt 98|D98|Germany|#003DA5|#F0F0F0|4
 augsburg|FC Augsburg|FCA|Germany|#BA3733|#46714D|4
 bielefeld|Arminia Bielefeld|DSC|Germany|#005CA9|#000000|4
 duisburg|MSV Duisburg|MSV|Germany|#005CA9|#F0F0F0|5
