@@ -426,7 +426,7 @@ export default function GameScreen({
   const ch = data.challenge!;
   const team = ch.type === "national" ? teamById.get(ch.teamId)! : clubById.get(ch.teamId)!;
   const players = ch.playerIds.map((id) => playerById.get(id)!);
-  const color = ch.type === "national" ? team.c1 : (team as { c1: string }).c1;
+  const color = team.c1;
 
   return (
     <div className="w-full pb-10">
@@ -499,9 +499,10 @@ export default function GameScreen({
           {/* reveal */}
           {revealed && (
             <div className="anim-rise mt-6 rounded-xl border border-pitch-line/25 bg-pitch-900/70 p-5">
-              <div className={`anim-stamp display mb-4 inline-block rounded-lg border-4 px-5 py-2 text-3xl font-bold md:text-4xl ${correct ? "text-win" : "text-lose"}`}
+              <div className={`anim-stamp display mb-4 inline-flex items-center gap-3 rounded-lg border-4 px-5 py-2 text-3xl font-bold md:text-4xl ${correct ? "text-win" : "text-lose"}`}
                 style={{ borderColor: correct ? "var(--color-win)" : "var(--color-lose)", textShadow: "0 3px 0 rgba(2,6,20,0.8)" }}>
                 {correct ? "CORRECT!" : "INCORRECT!"}
+                <span className="inline-flex">{correct ? <CheckIcon size={30} /> : <XIcon size={30} />}</span>
               </div>
               <div className="flex flex-col items-center gap-5 md:flex-row md:items-start">
                 <div className="flex shrink-0 flex-col items-center gap-2">
@@ -557,9 +558,10 @@ function RevealFooter({
   return (
     <div className="anim-rise mt-6 rounded-xl border border-pitch-line/25 bg-pitch-900/70 p-5">
       <div className="flex flex-wrap items-center gap-3">
-        <span className={`display rounded-md px-4 py-1.5 text-2xl font-bold ${correct ? "bg-pitch-900 text-win" : "bg-pitch-900 text-lose"}`}
+        <span className={`display inline-flex items-center gap-2.5 rounded-md px-4 py-1.5 text-2xl font-bold ${correct ? "bg-pitch-900 text-win" : "bg-pitch-900 text-lose"}`}
           style={{ border: `3px solid ${correct ? "var(--color-win)" : "var(--color-lose)"}`, textShadow: "0 2px 0 rgba(2,6,20,0.8)" }}>
           {correct ? "CORRECT!" : "INCORRECT!"}
+          {correct ? <CheckIcon size={22} /> : <XIcon size={22} />}
         </span>
         {correct && (
           <span className="display text-lg text-win">
