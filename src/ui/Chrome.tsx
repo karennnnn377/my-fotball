@@ -1,5 +1,6 @@
 import { ButtonHTMLAttributes, ReactNode, useEffect, useState } from "react";
 import { DIFFICULTY_CONFIG, DiffKey, Mode } from "../engine/types";
+import { useI18n } from "../i18n";
 
 /* ============ sound (tiny WebAudio synth, no assets) ============ */
 let ctx: AudioContext | null = null;
@@ -85,18 +86,24 @@ export function XIcon({ size = 20 }: { size?: number }) {
   );
 }
 export function ArrowIcon({ size = 18, dir = "left" }: { size?: number; dir?: "left" | "right" }) {
+  /* The inner <g> handles the right-arrow rotation (SVG attribute),
+     while the outer svg flips itself in RTL via the rtl-flip class —
+     so "back" always points to the reading start direction. */
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden style={{ transform: dir === "right" ? "rotate(180deg)" : undefined }}>
-      <path d="M15 4 L7 12 L15 20" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden className="rtl-flip">
+      <g transform={dir === "right" ? "rotate(180 12 12)" : undefined}>
+        <path d="M15 4 L7 12 L15 20" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      </g>
     </svg>
   );
 }
 
 /* ============ difficulty badge ============ */
 export function DifficultyBadge({ diff, label, small = false }: { diff: DiffKey | "random"; label?: string; small?: boolean }) {
-  const meta = diff === "random"
-    ? { label: label || "RANDOM", color: "#f7b32b", deep: "#7c4a03" }
-    : DIFFICULTY_CONFIG[diff];
+  const { t } = useI18n();
+  const text = label || (diff === "random" ? t.randomLabel : t.diff[diff].label);
+  const color = diff === "random" ? "#f7b32b" : DIFFICULTY_CONFIG[diff].color;
+  const meta = { label: text, color };
   return (
     <span
       className={`display inline-flex items-center gap-1.5 rounded-[4px] text-white ${small ? "px-2 py-0.5 text-[11px]" : "px-3 py-1 text-sm"}`}
@@ -197,6 +204,7 @@ function SpeakerIcon({ off }: { off: boolean }) {
 }
 export function MuteToggle({ size = "md" }: { size?: "sm" | "md" }) {
   const [off, setOff] = useState(sfx.muted);
+  const { t } = useI18n();
   useEffect(() => {
     // keep in sync with the "M" keyboard shortcut
     const sync = () => setOff(sfx.muted);
@@ -206,12 +214,12 @@ export function MuteToggle({ size = "md" }: { size?: "sm" | "md" }) {
   return (
     <button
       onClick={() => { setOff(sfx.toggle()); window.dispatchEvent(new Event("mdl-mute")); if (!sfx.muted) sfx.click(); }}
-      title={off ? "Unmute (M)" : "Mute (M)"}
-      aria-label={off ? "Unmute" : "Mute"}
+      title={off ? `${t.soundOn} (M)` : `${t.soundOff} (M)`}
+      aria-label={off ? t.soundOn : t.soundOff}
       className={`display inline-flex items-center gap-1.5 rounded-md border border-pitch-line/30 bg-pitch-900/80 text-ink-dim transition-all hover:text-white hover:border-pitch-line/60 hover:-translate-y-px ${size === "sm" ? "px-2 py-1" : "px-2.5 py-1.5"}`}
     >
       <SpeakerIcon off={off} />
-      <span className={`tracking-[0.15em] ${size === "sm" ? "text-[10px]" : "text-[11px]"}`}>{off ? "SOUND OFF" : "SOUND ON"}</span>
+      <span className={`tracking-[0.15em] ${size === "sm" ? "text-[10px]" : "text-[11px]"}`}>{off ? t.soundOff : t.soundOn}</span>
     </button>
   );
 }

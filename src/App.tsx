@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { DiffKey, Mode } from "./engine/types";
+import { LangProvider } from "./i18n";
 import { MenuScreen, DifficultyScreen, HowToScreen } from "./screens/Home";
 import GameScreen from "./screens/Game";
 
@@ -10,6 +11,14 @@ type Screen =
   | { name: "game"; mode: Mode; difficulty: DiffKey | "random"; key: number };
 
 export default function App() {
+  return (
+    <LangProvider>
+      <Shell />
+    </LangProvider>
+  );
+}
+
+function Shell() {
   const [screen, setScreen] = useState<Screen>({ name: "menu" });
 
   return (

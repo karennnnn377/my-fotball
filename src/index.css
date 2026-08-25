@@ -4,6 +4,11 @@
 @import "@fontsource/titillium-web/400.css";
 @import "@fontsource/titillium-web/600.css";
 @import "@fontsource/titillium-web/700.css";
+@import "@fontsource/lalezar/400.css";
+@import "@fontsource/cairo/700.css";
+@import "@fontsource/cairo/800.css";
+@import "@fontsource/vazirmatn/400.css";
+@import "@fontsource/vazirmatn/700.css";
 @import "tailwindcss";
 
 @theme {
@@ -190,3 +195,32 @@ body {
 ::-webkit-scrollbar-track { background: #071531; }
 ::-webkit-scrollbar-thumb { background: #1a4285; border-radius: 8px; border: 2px solid #071531; }
 ::-webkit-scrollbar-thumb:hover { background: #2757a8; }
+
+/* ============================================================
+   TRILINGUAL TYPE SYSTEM (EN / FA / AR)
+   Persian display: Lalezar — a punchy Persian poster face.
+   Arabic display:  Cairo ExtraBold — geometric & sporty.
+   Shared body:     Vazirmatn — full Persian + Arabic coverage.
+   ============================================================ */
+html[lang="fa"] {
+  --font-display: "Lalezar", "Oswald", "Arial Narrow", sans-serif;
+  --font-body: "Vazirmatn", "Titillium Web", "Segoe UI", sans-serif;
+}
+html[lang="ar"] {
+  --font-display: "Cairo", "Oswald", "Arial Narrow", sans-serif;
+  --font-body: "Vazirmatn", "Titillium Web", "Segoe UI", sans-serif;
+}
+html[lang="fa"] body, html[lang="ar"] body { line-height: 1.7; }
+
+/* letter-spacing breaks Arabic-script letter joining — never allow it */
+html[lang="fa"] *, html[lang="ar"] * { letter-spacing: normal !important; }
+
+/* directional icons (arrows) mirror themselves in RTL layouts */
+[dir="rtl"] .rtl-flip { transform: scaleX(-1); }
+
+/* Persian/Arabic display faces need a friendlier line height */
+html[lang="fa"] .display, html[lang="ar"] .display { line-height: 1.4; }
+
+/* language switcher buttons */
+.lang-btn { font-family: var(--font-display); cursor: pointer; border: 1px solid transparent; }
+.lang-btn:not(:hover):not([aria-pressed="true"]) { border-color: rgba(143, 184, 238, 0.18); }

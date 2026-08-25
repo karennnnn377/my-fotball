@@ -7,6 +7,7 @@ import {
 import {
   clubById, getRandomChallenge, getRandomQuestion, playerById, resolveRandomDifficulty, shuffle, teamById,
 } from "../engine/engine";
+import { useI18n } from "../i18n";
 import Crest from "../ui/Crest";
 import Portrait from "../ui/Portrait";
 import {
@@ -39,7 +40,7 @@ function makeRound(mode: Mode, difficulty: DiffKey | "random"): RoundData {
   return { difficulty: d, challenge: ch, optionIds: ids };
 }
 
-function CountUp({ value }: { value: number }) {
+function CountUp({ value, fmt }: { value: number; fmt: (x: number) => string }) {
   const [v, setV] = useState(0);
   useEffect(() => {
     let raf = 0;
@@ -53,7 +54,7 @@ function CountUp({ value }: { value: number }) {
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [value]);
-  return <>{v.toLocaleString()}</>;
+  return <>{fmt(v)}</>;
 }
 
 const LETTERS = ["A", "B", "C", "D"];
@@ -73,12 +74,11 @@ export default function GameScreen({
   onChangeDifficulty: () => void;
   onMenu: () => void;
 }) {
+  const { t, lang } = useI18n();
   const [round, setRound] = useState(0);
-  /* Fixed difficulties seed round 1 synchronously so the roulette card
-     never flashes for a frame (and no extra question is consumed). */
-  const [data, setData] = useState<RoundData | null>(() =>
-    difficulty === "random" ? null : makeRound(mode, difficulty),
-  );
+  /* Round 1 is created synchronously so the correct difficulty badge is on
+     screen from the very first frame — no flash of a stale pool label. */
+  const [data, setData] = useState<RoundData | null>(() => makeRound(mode, difficulty));
   const [choice, setChoice] = useState<number | null>(null);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
@@ -222,17 +222,17 @@ export default function GameScreen({
   if (round >= ROUNDS_PER_GAME) {
     const correctCnt = results.filter((r) => r.correct).length;
     const pct = correctCnt / ROUNDS_PER_GAME;
-    const title = pct >= 0.9 ? "THE G.O.A.T." : pct >= 0.7 ? "WORLD CLASS" : pct >= 0.5 ? "FIRST TEAM" : pct >= 0.3 ? "SQUAD PLAYER" : "SUNDAY LEAGUE";
+    const title = pct >= 0.9 ? t.ftTitles[0] : pct >= 0.7 ? t.ftTitles[1] : pct >= 0.5 ? t.ftTitles[2] : pct >= 0.3 ? t.ftTitles[3] : t.ftTitles[4];
     const stars = Math.max(1, Math.round(pct * 5));
     return (
       <div className="mx-auto w-full max-w-2xl px-4 py-8 md:py-14">
         <div className="glossy-deep anim-pop rounded-2xl p-6 text-center md:p-10">
           <div className="mb-2 flex items-center justify-center gap-2 text-gold-400" style={{ color: "var(--color-gold-400)" }}>
             <BallIcon size={22} />
-            <span className="display text-xs tracking-[0.35em]">FULL TIME</span>
+            <span className="display text-xs tracking-[0.35em]">{t.fullTime}</span>
             <BallIcon size={22} />
           </div>
-          <h1 className="display text-outline text-5xl font-bold text-white md:text-6xl">{title}</h1>
+          <h1 className="display text-outline text-4xl font-bold text-white md:text-6xl">{title}</h1>
           <div className="mt-3 flex justify-center gap-1.5">
             {[0, 1, 2, 3, 4].map((i) => (
               <svg key={i} width="26" height="26" viewBox="0 0 24 24" style={{ opacity: i < stars ? 1 : 0.25 }}>
@@ -241,23 +241,23 @@ export default function GameScreen({
               </svg>
             ))}
           </div>
-          <div className="display mt-6 text-7xl font-bold text-gold-400 md:text-8xl" style={{ color: "var(--color-gold-400)", textShadow: "0 4px 0 rgba(2,6,20,0.8)" }}>
-            <CountUp value={score} />
+          <div className="display mt-6 text-6xl font-bold text-gold-400 md:text-8xl" style={{ color: "var(--color-gold-400)", textShadow: "0 4px 0 rgba(2,6,20,0.8)" }}>
+            <CountUp value={score} fmt={t.n} />
           </div>
-          <div className="display text-[11px] tracking-[0.3em] text-ink-dim">POINTS</div>
+          <div className="display text-[11px] tracking-[0.3em] text-ink-dim">{t.pointsWord}</div>
           <div className="display mt-1 h-5 text-[11px] tracking-[0.3em] text-ink-dim">
             {newBest ? (
-              <span className="anim-pop inline-block font-bold text-gold-400" style={{ color: "var(--color-gold-400)" }}>★ NEW PERSONAL BEST ★</span>
+              <span className="anim-pop inline-block font-bold text-gold-400" style={{ color: "var(--color-gold-400)" }}>{t.newBest}</span>
             ) : prevBest > 0 ? (
-              <span>PERSONAL BEST {prevBest.toLocaleString()}</span>
+              <span>{t.personalBest(prevBest)}</span>
             ) : null}
           </div>
 
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <StatPlate label="CORRECT" value={`${results.filter((r) => r.correct).length}/${ROUNDS_PER_GAME}`} accent="var(--color-win)" />
-            <StatPlate label="WRONG" value={results.length - results.filter((r) => r.correct).length} accent="var(--color-lose)" />
-            <StatPlate label="BEST STREAK" value={<span className="inline-flex items-center gap-1"><FlameIcon size={16} />{best}</span>} />
-            <StatPlate label="MODE" value={<span className="text-sm leading-tight">{mode === "quiz" ? "QUIZ" : mode === "national" ? "NATIONS" : "CLUBS"}</span>} accent="#8fb8ee" />
+            <StatPlate label={t.statCorrect} value={`${t.n(results.filter((r) => r.correct).length)}/${t.n(ROUNDS_PER_GAME)}`} accent="var(--color-win)" />
+            <StatPlate label={t.statWrong} value={t.n(results.length - results.filter((r) => r.correct).length)} accent="var(--color-lose)" />
+            <StatPlate label={t.statBestStreak} value={<span className="inline-flex items-center gap-1"><FlameIcon size={16} />{t.n(best)}</span>} />
+            <StatPlate label={t.statMode} value={<span className="text-sm leading-tight">{t.modeShort[mode]}</span>} accent="#8fb8ee" />
           </div>
 
           <div className="mt-5 flex flex-wrap justify-center gap-1.5">
@@ -268,21 +268,19 @@ export default function GameScreen({
                   border: "1px solid rgba(255,255,255,0.25)",
                   borderBottom: `3px solid ${DIFF_HEX[r.difficulty]}`,
                 }}
-                title={`${DIFFICULTY_CONFIG[r.difficulty].label} — ${r.correct ? `+${r.points}` : "0 pts"}`}>
-                {i + 1}{r.correct ? " ✓" : " ✕"}
+                title={`${t.diff[r.difficulty].label} — ${r.correct ? t.plusPts(r.points) : t.n(0)}`}>
+                {t.n(i + 1)}{r.correct ? " ✓" : " ✕"}
               </span>
             ))}
           </div>
           {difficulty === "random" && (
-            <p className="display mt-3 text-[10px] tracking-[0.2em] text-ink-dim">
-              CHIP EDGES SHOW EACH ROUND'S ROLLED DIFFICULTY
-            </p>
+            <p className="display mt-3 text-[10px] tracking-[0.2em] text-ink-dim">{t.chipNote}</p>
           )}
 
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <GameButton color="#0aa05b" onClick={() => { sfx.fanfare(); onPlayAgain(); }}>PLAY AGAIN</GameButton>
-            <GameButton color="#2757a8" onClick={onChangeDifficulty}>CHANGE DIFFICULTY</GameButton>
-            <GameButton color="#5a6b8c" shadowBottom="#2b3448" onClick={onMenu}>MAIN MENU</GameButton>
+            <GameButton color="#0aa05b" onClick={() => { sfx.fanfare(); onPlayAgain(); }}>{t.playAgain}</GameButton>
+            <GameButton color="#2757a8" onClick={onChangeDifficulty}>{t.changeDifficulty}</GameButton>
+            <GameButton color="#5a6b8c" shadowBottom="#2b3448" onClick={onMenu}>{t.mainMenu}</GameButton>
           </div>
         </div>
       </div>
@@ -295,42 +293,40 @@ export default function GameScreen({
   const hud = (
     <div className="mx-auto mb-5 w-full max-w-4xl px-4">
       <div className="glossy flex flex-wrap items-center gap-3 rounded-xl px-4 py-3">
-        <button onClick={() => { sfx.click(); onExit(); }} className="flex items-center gap-1.5 text-ink-dim transition-colors hover:text-white" title="Back to menu">
+        <button onClick={() => { sfx.click(); onExit(); }} className="flex items-center gap-1.5 text-ink-dim transition-colors hover:text-white" title={t.mainMenu}>
           <ArrowIcon size={16} />
-          <span className="display text-[11px] tracking-[0.2em]">MENU</span>
+          <span className="display text-[11px] tracking-[0.2em]">{t.hudMenu}</span>
         </button>
         <span className="hidden h-6 w-px bg-pitch-line/25 sm:block" />
-        <span className="display text-xs tracking-[0.2em] text-ink-dim">
-          {mode === "quiz" ? "FOOTBALL QUIZ" : mode === "national" ? "GUESS THE NATION" : "GUESS THE CLUB"}
-        </span>
+        <span className="display text-xs tracking-[0.2em] text-ink-dim">{t.hudModes[mode]}</span>
         <span className={difficulty === "random" && locked ? "anim-flame inline-block" : "inline-block"}>
           <DifficultyBadge diff={difficulty === "random" ? (spinDiff ?? data?.difficulty ?? "easy") : difficulty} small />
         </span>
         {difficulty === "random" && (
           <span className="display rounded bg-pitch-900/80 px-2 py-0.5 text-[10px] tracking-widest text-gold-400" style={{ color: "var(--color-gold-400)" }}>
-            {locked ? "ROLLING" : "ROLLED"}
+            {locked ? t.rolling : t.rolled}
           </span>
         )}
 
-        <div className="ml-auto flex items-center gap-3">
+        <div className="ms-auto flex items-center gap-3">
           {/* progress segments */}
-          <div className="flex items-center gap-1" title={`Round ${Math.min(round + 1, ROUNDS_PER_GAME)} of ${ROUNDS_PER_GAME}`}>
+          <div className="flex items-center gap-1" title={t.round(Math.min(round + 1, ROUNDS_PER_GAME), ROUNDS_PER_GAME)}>
             {Array.from({ length: ROUNDS_PER_GAME }).map((_, i) => {
               const r = results[i];
               const bg = r ? (r.correct ? "var(--color-win)" : "var(--color-lose)") : i === round ? "var(--color-gold-400)" : "rgba(143,184,238,0.25)";
               return <span key={i} className="h-2.5 w-4 rounded-sm" style={{ background: bg, boxShadow: i === round && !r ? "0 0 8px rgba(255,210,87,0.7)" : undefined }} />;
             })}
           </div>
-          <span key={scoreKey} className={scoreKey ? "anim-score display text-xl font-bold text-gold-400" : "display text-xl font-bold text-gold-400"} style={{ color: "var(--color-gold-400)", minWidth: 64, textAlign: "right" }}>
-            {score.toLocaleString()}
+          <span key={scoreKey} className={scoreKey ? "anim-score display text-xl font-bold text-gold-400" : "display text-xl font-bold text-gold-400"} style={{ color: "var(--color-gold-400)", minWidth: 64, textAlign: "end" }}>
+            {t.n(score)}
           </span>
           {streak >= 2 && (
             <span
               className="anim-flame inline-flex items-center gap-0.5 rounded-md bg-pitch-900/80 px-2 py-1 text-sm font-bold text-orange-300"
               style={{ color: "#ffb84d" }}
-              title={`Streak bonus on next correct answer: +${Math.min(streak, STREAK_BONUS_MAX_STEPS) * STREAK_BONUS_STEP_PCT}%`}
+              title={t.streakTitle(Math.min(streak, STREAK_BONUS_MAX_STEPS) * STREAK_BONUS_STEP_PCT)}
             >
-              <FlameIcon size={15} />{streak}
+              <FlameIcon size={15} />{t.n(streak)}
             </span>
           )}
           <MuteToggle size="sm" />
@@ -341,12 +337,13 @@ export default function GameScreen({
 
   /* ============ RANDOM DIFFICULTY ROULETTE (between rounds) ============ */
   if (locked || !data) {
+    const rl = t.rouletteLine;
     return (
       <div className="w-full pb-10">
         {hud}
         <div className="mx-auto w-full max-w-3xl px-4">
           <div className="glossy-deep anim-rise rounded-2xl p-8 text-center md:p-12">
-            <div className="display mb-5 text-[11px] tracking-[0.35em] text-ink-dim">DIFFICULTY ROULETTE</div>
+            <div className="display mb-5 text-[11px] tracking-[0.35em] text-ink-dim">{t.rouletteTitle}</div>
             <div key={spinDiff ?? "idle"} className="anim-pop inline-block">
               <DifficultyBadge diff={spinDiff ?? "easy"} />
             </div>
@@ -354,9 +351,8 @@ export default function GameScreen({
               <div className="anim-roulette-bar h-full rounded-full" style={{ background: "linear-gradient(90deg, #22c55e, #38bdf8, #f59e0b, #ef4444, #c026d3)" }} />
             </div>
             <p className="mx-auto mt-6 max-w-md text-sm leading-relaxed text-ink-dim">
-              A difficulty is rolled <span className="font-semibold text-white">first</span> — then only{" "}
-              <span className="font-semibold text-white">that level's dedicated pool</span> supplies the{" "}
-              {mode === "quiz" ? "question" : "challenge"}. Fair chaos.
+              {rl.a} <span className="font-semibold text-white">{rl.b}</span> {rl.c}{" "}
+              <span className="font-semibold text-white">{rl.d(mode)}</span> {rl.e(mode)}
             </p>
           </div>
         </div>
@@ -375,12 +371,15 @@ export default function GameScreen({
           <div key={round} className="glossy-deep anim-rise rounded-2xl p-6 md:p-8">
             <div className="mb-4 flex flex-wrap items-center gap-2">
               <span className="display rounded bg-pitch-700 px-2.5 py-1 text-[11px] tracking-[0.2em] text-ink-dim border border-pitch-line/20">
-                {q.category.toUpperCase()}
+                {(t.categories[q.category] || q.category).toUpperCase()}
               </span>
-              <span className="display text-[11px] tracking-[0.2em] text-ink-dim">ROUND {round + 1} / {ROUNDS_PER_GAME}</span>
-              <span className="ml-auto display text-[11px] tracking-[0.2em]" style={{ color: meta.color }}>WORTH {meta.points} PTS</span>
+              <span className="display text-[11px] tracking-[0.2em] text-ink-dim">{t.round(round + 1, ROUNDS_PER_GAME)}</span>
+              <span className="ms-auto display text-[11px] tracking-[0.2em]" style={{ color: meta.color }}>{t.worth(meta.points)}</span>
             </div>
-            <h2 className="display text-2xl font-semibold leading-snug text-white md:text-3xl">{q.text}</h2>
+            {/* questions stay in their original English wording — names & facts are universal */}
+            <h2 className="display text-2xl font-semibold leading-snug text-white md:text-3xl" dir="ltr" style={{ textAlign: "left" }}>
+              {q.text}
+            </h2>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
               {data.options!.map((opt, i) => {
@@ -402,7 +401,7 @@ export default function GameScreen({
                     <span className="display grid h-8 w-8 shrink-0 place-items-center rounded-md bg-pitch-900/90 text-sm text-gold-400 border border-pitch-line/25" style={{ color: "var(--color-gold-400)" }}>
                       {LETTERS[i]}
                     </span>
-                    <span className="min-w-0 flex-1 text-[15px] font-semibold text-white">{opt}</span>
+                    <span className="min-w-0 flex-1 text-[15px] font-semibold text-white" dir="ltr" style={{ textAlign: "left" }}>{opt}</span>
                     {revealed && i === data.answerIdx && <span className="text-win"><CheckIcon size={22} /></span>}
                     {revealed && i === choice && i !== data.answerIdx && <span className="text-lose"><XIcon size={22} /></span>}
                   </button>
@@ -431,6 +430,7 @@ export default function GameScreen({
   const team = ch.type === "national" ? teamById.get(ch.teamId)! : clubById.get(ch.teamId)!;
   const players = ch.playerIds.map((id) => playerById.get(id)!);
   const color = team.c1;
+  const namesList = players.map((p) => p.name).join(lang === "en" ? ", " : "، ");
 
   return (
     <div className="w-full pb-10">
@@ -439,13 +439,13 @@ export default function GameScreen({
         <div key={round} className="glossy-deep anim-rise rounded-2xl p-5 md:p-8">
           <div className="mb-2 flex flex-wrap items-center gap-2">
             <span className="display rounded bg-pitch-700 px-2.5 py-1 text-[11px] tracking-[0.2em] text-ink-dim border border-pitch-line/20">
-              {ch.type === "national" ? "INTERNATIONAL DUTY" : "CLUB CAREER"}
+              {ch.type === "national" ? t.intlDuty : t.clubCareer}
             </span>
-            <span className="display text-[11px] tracking-[0.2em] text-ink-dim">ROUND {round + 1} / {ROUNDS_PER_GAME}</span>
-            <span className="ml-auto display text-[11px] tracking-[0.2em]" style={{ color: meta.color }}>WORTH {meta.points} PTS</span>
+            <span className="display text-[11px] tracking-[0.2em] text-ink-dim">{t.round(round + 1, ROUNDS_PER_GAME)}</span>
+            <span className="ms-auto display text-[11px] tracking-[0.2em]" style={{ color: meta.color }}>{t.worth(meta.points)}</span>
           </div>
           <h2 className="display text-xl font-semibold leading-snug text-white md:text-2xl">
-            {ch.type === "national" ? "These players all represented one national team. Which one?" : "These players all played for one club. Which one?"}
+            {ch.type === "national" ? t.guessNatQ : t.guessClubQ}
           </h2>
 
           {/* player lineup */}
@@ -466,7 +466,7 @@ export default function GameScreen({
             </div>
             {!revealed && (
               <div className="display relative pb-3 text-center text-[10px] tracking-[0.28em] text-gold-300" style={{ color: "var(--color-gold-300)" }}>
-                FACES HIDDEN — THE NAMES ARE YOUR ONLY CLUE
+                {t.facesHidden}
               </div>
             )}
           </div>
@@ -474,7 +474,7 @@ export default function GameScreen({
           {/* crest options */}
           <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
             {data.optionIds!.map((id, i) => {
-              const t = ch.type === "national" ? teamById.get(id)! : clubById.get(id)!;
+              const opt = ch.type === "national" ? teamById.get(id)! : clubById.get(id)!;
               const isCorrect = id === ch.teamId;
               const isPick = data.optionIds![choice ?? -1] === id;
               let style: CSSProperties = {};
@@ -491,8 +491,8 @@ export default function GameScreen({
               }
               return (
                 <button key={id} disabled={revealed} onClick={() => answer(i)} className={`${cls} anim-rise relative flex flex-col items-center gap-1.5 rounded-xl px-3 py-4`} style={{ ...style, animationDelay: `${i * 70}ms` }}>
-                  <Crest id={t.id} name={t.name} code={t.code} c1={t.c1} c2={t.c2} size={76} />
-                  <span className="display text-center text-sm font-semibold leading-tight text-white">{t.name}</span>
+                  <Crest id={opt.id} name={opt.name} code={opt.code} c1={opt.c1} c2={opt.c2} size={76} />
+                  <span className="display text-center text-sm font-semibold leading-tight text-white" dir="ltr">{opt.name}</span>
                   {revealed && isCorrect && <span className="absolute right-2 top-2 text-win"><CheckIcon size={20} /></span>}
                   {revealed && isPick && !isCorrect && <span className="absolute right-2 top-2 text-lose"><XIcon size={20} /></span>}
                 </button>
@@ -505,22 +505,22 @@ export default function GameScreen({
             <div className="anim-rise mt-6 rounded-xl border border-pitch-line/25 bg-pitch-900/70 p-5">
               <div className={`anim-stamp display mb-4 inline-flex items-center gap-3 rounded-lg border-4 px-5 py-2 text-3xl font-bold md:text-4xl ${correct ? "text-win" : "text-lose"}`}
                 style={{ borderColor: correct ? "var(--color-win)" : "var(--color-lose)", textShadow: "0 3px 0 rgba(2,6,20,0.8)" }}>
-                {correct ? "CORRECT!" : "INCORRECT!"}
+                {correct ? t.correct : t.incorrect}
                 <span className="inline-flex">{correct ? <CheckIcon size={30} /> : <XIcon size={30} />}</span>
               </div>
               <div className="flex flex-col items-center gap-5 md:flex-row md:items-start">
                 <div className="flex shrink-0 flex-col items-center gap-2">
-                  <span className="display text-[10px] tracking-[0.25em] text-ink-dim">{correct ? "THE ANSWER" : "THE CORRECT ANSWER"}</span>
+                  <span className="display text-[10px] tracking-[0.25em] text-ink-dim">{correct ? t.theAnswer : t.theCorrectAnswer}</span>
                   <div className="anim-pop rounded-xl bg-pitch-800/80 p-3 border border-pitch-line/25">
                     <Crest id={team.id} name={team.name} code={team.code} c1={team.c1} c2={team.c2} size={110} />
                   </div>
-                  <span className="display text-xl font-bold text-gold-400" style={{ color: "var(--color-gold-400)" }}>{team.name}</span>
+                  <span className="display text-xl font-bold text-gold-400" style={{ color: "var(--color-gold-400)" }} dir="ltr">{team.name}</span>
                   {correct && (
                     <span className="anim-pop display rounded-md bg-pitch-900 px-3 py-1 text-lg text-win" style={{ animationDelay: "250ms" }}>
-                      +{results[results.length - 1]?.points ?? meta.points} PTS
+                      {t.plusPts(results[results.length - 1]?.points ?? meta.points)}
                       {lastBonus > 0 && (
-                        <span className="ml-2 text-[11px] tracking-wider text-gold-400" style={{ color: "var(--color-gold-400)" }}>
-                          INCL. +{lastBonus} STREAK
+                        <span className="ms-2 text-[11px] tracking-wider text-gold-400" style={{ color: "var(--color-gold-400)" }}>
+                          {t.streakBonus(lastBonus)}
                         </span>
                       )}
                     </span>
@@ -528,7 +528,7 @@ export default function GameScreen({
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="display mb-2 text-[11px] tracking-[0.25em] text-ink-dim">
-                    SQUAD REVEAL — {ch.type === "national" ? `ALL CAPPED BY ${team.name.toUpperCase()}` : `ALL PLAYED FOR ${team.name.toUpperCase()}`}
+                    {ch.type === "national" ? t.squadRevealNat(team.name) : t.squadRevealClub(team.name)}
                   </div>
                   <div className="flex flex-wrap gap-3">
                     {players.map((p, i) => (
@@ -538,13 +538,15 @@ export default function GameScreen({
                     ))}
                   </div>
                   <p className="mt-4 text-sm leading-relaxed text-ink-dim">
-                    {players.map((p) => p.name).join(", ")} {ch.type === "national" ? `all represented ${team.name} at international level.` : `all played for ${team.name} during their careers.`}
+                    {ch.type === "national"
+                      ? t.revealSentenceNat(namesList, team.name)
+                      : t.revealSentenceClub(namesList, team.name)}
                   </p>
                 </div>
               </div>
               <div className="mt-5 flex justify-end">
                 <GameButton color={isLast ? "#f7b32b" : "#0aa05b"} shadowBottom={isLast ? "#7c4a03" : undefined} onClick={next}>
-                  {isLast ? "FULL TIME" : "NEXT ROUND"}
+                  {isLast ? t.fullTimeBtn : t.nextRound}
                 </GameButton>
               </div>
             </div>
@@ -559,31 +561,32 @@ export default function GameScreen({
 function RevealFooter({
   correct, points, bonus, explanation, isLast, onNext,
 }: { correct: boolean; points: number; bonus?: number; explanation?: string; isLast: boolean; onNext: () => void }) {
+  const { t } = useI18n();
   return (
     <div className="anim-rise mt-6 rounded-xl border border-pitch-line/25 bg-pitch-900/70 p-5">
       <div className="flex flex-wrap items-center gap-3">
         <span className={`display inline-flex items-center gap-2.5 rounded-md px-4 py-1.5 text-2xl font-bold ${correct ? "bg-pitch-900 text-win" : "bg-pitch-900 text-lose"}`}
           style={{ border: `3px solid ${correct ? "var(--color-win)" : "var(--color-lose)"}`, textShadow: "0 2px 0 rgba(2,6,20,0.8)" }}>
-          {correct ? "CORRECT!" : "INCORRECT!"}
+          {correct ? t.correct : t.incorrect}
           {correct ? <CheckIcon size={22} /> : <XIcon size={22} />}
         </span>
         {correct && (
           <span className="display text-lg text-win">
-            +{points} PTS
+            {t.plusPts(points)}
             {bonus ? (
-              <span className="ml-2 align-middle text-[11px] tracking-wider text-gold-400" style={{ color: "var(--color-gold-400)" }}>
-                INCL. +{bonus} STREAK BONUS
+              <span className="ms-2 align-middle text-[11px] tracking-wider text-gold-400" style={{ color: "var(--color-gold-400)" }}>
+                {t.streakBonus(bonus)}
               </span>
             ) : null}
           </span>
         )}
-        <div className="ml-auto">
+        <div className="ms-auto">
           <GameButton color={isLast ? "#f7b32b" : "#0aa05b"} shadowBottom={isLast ? "#7c4a03" : undefined} onClick={onNext}>
-            {isLast ? "FULL TIME" : "NEXT ROUND"}
+            {isLast ? t.fullTimeBtn : t.nextRound}
           </GameButton>
         </div>
       </div>
-      {explanation && <p className="mt-3 text-sm leading-relaxed text-ink-dim">{explanation}</p>}
+      {explanation && <p className="mt-3 text-sm leading-relaxed text-ink-dim" dir="ltr" style={{ textAlign: "left" }}>{explanation}</p>}
     </div>
   );
 }

@@ -1,22 +1,9 @@
-import type { ReactNode } from "react";
 import { DIFFICULTY_CONFIG, DIFF_ORDER, DiffKey, Mode, ROUNDS_PER_GAME } from "../engine/types";
 import { CLUB_POOLS, dbStats, NATIONAL_TEAM_POOLS, questionPools } from "../engine/engine";
+import { LangSwitch, Rich, useI18n } from "../i18n";
 import { ArrowIcon, BallIcon, DifficultyBadge, GameButton, getBest, MuteToggle, sfx, TrophyIcon } from "../ui/Chrome";
 
-const MODES: { key: Mode; n: string; title: string; desc: string }[] = [
-  {
-    key: "quiz", n: "01", title: "FOOTBALL QUIZ",
-    desc: "Multiple-choice questions across players, clubs, national teams, World Cups, Champions League, records and history.",
-  },
-  {
-    key: "national", n: "02", title: "GUESS THE NATIONAL TEAM",
-    desc: "3–5 players who genuinely represented the same country. Pick the right national team from four game-style crests.",
-  },
-  {
-    key: "club", n: "03", title: "GUESS THE CLUB",
-    desc: "3–5 players who genuinely played for the same club. Pick the right badge from four crests — then see the full reveal.",
-  },
-];
+const MODE_KEYS: Mode[] = ["quiz", "national", "club"];
 
 function ModeIcon({ mode }: { mode: Mode }) {
   if (mode === "quiz") {
@@ -51,72 +38,78 @@ function ModeIcon({ mode }: { mode: Mode }) {
 }
 
 export function MenuScreen({ onMode, onHowTo }: { onMode: (m: Mode) => void; onHowTo: () => void }) {
+  const { t } = useI18n();
   const stats = dbStats();
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-8 md:py-12">
-      {/* logo block */}
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 md:gap-8 md:py-12">
+      {/* language + season bar */}
+      <div className="flex items-center justify-between gap-3 anim-rise">
+        <span className="display rounded bg-pitch-700/80 px-3 py-1 text-[11px] tracking-[0.3em] text-ink-dim border border-pitch-line/25">
+          {t.season}
+        </span>
+        <LangSwitch />
+      </div>
+
+      {/* logo block — the brand stays Latin, the voice is yours */}
       <header className="anim-rise text-center">
         <div className="mb-3 flex items-center justify-center gap-3">
           <span className="anim-spin-slow inline-block"><BallIcon size={34} /></span>
-          <span className="display rounded bg-pitch-700/80 px-3 py-1 text-xs tracking-[0.3em] text-ink-dim border border-pitch-line/25">
-            SEASON 2026 • KICK-OFF
-          </span>
+          <h1 className="display text-outline leading-[0.95]">
+            <span className="block text-5xl font-bold tracking-wide text-white md:text-7xl">MATCHDAY</span>
+            <span className="block text-4xl font-semibold tracking-[0.35em] text-gold-400 md:text-6xl" style={{ color: "var(--color-gold-400)" }}>
+              LEGENDS
+            </span>
+          </h1>
           <span className="anim-spin-slow inline-block" style={{ animationDirection: "reverse" }}><BallIcon size={34} /></span>
         </div>
-        <h1 className="display text-outline leading-[0.9]">
-          <span className="block text-5xl font-bold tracking-wide text-white md:text-7xl">MATCHDAY</span>
-          <span className="block text-4xl font-semibold tracking-[0.35em] text-gold-400 md:text-6xl" style={{ color: "var(--color-gold-400)" }}>
-            LEGENDS
-          </span>
-        </h1>
-        <p className="mx-auto mt-4 max-w-xl text-base text-ink-dim md:text-lg">
-          The nostalgic football video-game quiz. Three modes. Five dedicated difficulty pools.
-          One very long final whistle.
-        </p>
+        <p className="mx-auto mt-4 max-w-xl text-base text-ink-dim md:text-lg">{t.tagline}</p>
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
         {/* mode cards */}
         <nav className="flex flex-col gap-4">
-          {MODES.map((m, i) => (
-            <button
-              key={m.key}
-              onClick={() => { sfx.click(); onMode(m.key); }}
-              className="mode-card glossy group flex items-center gap-4 rounded-xl px-5 py-5 text-left md:px-7 md:py-6 anim-rise"
-              style={{ animationDelay: `${i * 90}ms` }}
-            >
-              <span className="display hidden text-3xl font-bold text-pitch-line/40 md:block">{m.n}</span>
-              <span className="shrink-0 rounded-lg bg-pitch-900/70 p-3 border border-pitch-line/20"><ModeIcon mode={m.key} /></span>
-              <span className="min-w-0 flex-1">
-                <span className="display block text-xl font-semibold tracking-wide text-white md:text-2xl">{m.title}</span>
-                <span className="mt-1 block text-sm leading-snug text-ink-dim">{m.desc}</span>
-              </span>
-              <span className="text-gold-400 transition-transform duration-200 group-hover:translate-x-1.5" style={{ color: "var(--color-gold-400)" }}>
-                <ArrowIcon dir="right" size={26} />
-              </span>
-            </button>
-          ))}
+          {MODE_KEYS.map((key, i) => {
+            const m = t.modes[key];
+            return (
+              <button
+                key={key}
+                onClick={() => { sfx.click(); onMode(key); }}
+                className="mode-card glossy group flex items-center gap-4 rounded-xl px-5 py-5 text-left md:px-7 md:py-6 anim-rise"
+                style={{ animationDelay: `${i * 90}ms` }}
+              >
+                <span className="display hidden text-3xl font-bold text-pitch-line/40 md:block">{String(i + 1).padStart(2, "0")}</span>
+                <span className="shrink-0 rounded-lg bg-pitch-900/70 p-3 border border-pitch-line/20"><ModeIcon mode={key} /></span>
+                <span className="min-w-0 flex-1">
+                  <span className="display block text-xl font-semibold tracking-wide text-white md:text-2xl">{m.title}</span>
+                  <span className="mt-1 block text-sm leading-snug text-ink-dim">{m.desc}</span>
+                </span>
+                <span className="text-gold-400 transition-transform duration-200 group-hover:scale-125" style={{ color: "var(--color-gold-400)" }}>
+                  <ArrowIcon dir="right" size={26} />
+                </span>
+              </button>
+            );
+          })}
           <button
             onClick={() => { sfx.click(); onHowTo(); }}
             className="mode-card plate flex items-center justify-center gap-2 rounded-xl px-5 py-3.5 anim-rise"
             style={{ animationDelay: "280ms" }}
           >
             <TrophyIcon size={18} />
-            <span className="display text-sm tracking-[0.2em] text-ink">HOW TO PLAY</span>
+            <span className="display text-sm tracking-[0.2em] text-ink">{t.howToPlay}</span>
           </button>
         </nav>
 
         {/* side panel */}
-        <aside className="glossy-deep rounded-xl p-5 anim-rise" style={{ animationDelay: "180ms" }}>
+        <aside className="glossy-deep h-fit rounded-xl p-5 anim-rise" style={{ animationDelay: "180ms" }}>
           <h2 className="display mb-4 text-sm tracking-[0.25em] text-gold-400" style={{ color: "var(--color-gold-400)" }}>
-            CLUB DATABASE
+            {t.dbTitle}
           </h2>
           <dl className="flex flex-col gap-3">
             {[
-              ["PLAYERS", stats.players.toLocaleString()],
-              ["NATIONAL TEAMS", stats.nationalTeams.toLocaleString()],
-              ["CLUBS", stats.clubs.toLocaleString()],
-              ["QUESTIONS", `${stats.questions.toLocaleString()}+`],
+              [t.dbPlayers, t.n(stats.players)],
+              [t.dbTeams, t.n(stats.nationalTeams)],
+              [t.dbClubs, t.n(stats.clubs)],
+              [t.dbQuestions, `${t.n(stats.questions)}+`],
             ].map(([k, v]) => (
               <div key={k} className="flex items-baseline justify-between border-b border-pitch-line/15 pb-2">
                 <dt className="display text-[11px] tracking-[0.18em] text-ink-dim">{k}</dt>
@@ -125,20 +118,17 @@ export function MenuScreen({ onMode, onHowTo }: { onMode: (m: Mode) => void; onH
             ))}
           </dl>
           <h2 className="display mb-2 mt-6 text-sm tracking-[0.25em] text-gold-400" style={{ color: "var(--color-gold-400)" }}>
-            DIFFICULTY LADDER
+            {t.ladder}
           </h2>
           <ul className="flex flex-col gap-1.5">
             {DIFF_ORDER.map((d) => (
-              <li key={d} className="flex items-center justify-between">
+              <li key={d} className="flex items-center justify-between gap-2">
                 <DifficultyBadge diff={d} small />
-                <span className="text-xs text-ink-dim">{questionPools[d].length} Qs • {DIFFICULTY_CONFIG[d].points} pts</span>
+                <span className="text-xs text-ink-dim">{t.n(questionPools[d].length)} {t.qsShort} • {t.n(DIFFICULTY_CONFIG[d].points)} {t.ptsShort}</span>
               </li>
             ))}
           </ul>
-          <p className="mt-5 text-xs leading-relaxed text-ink-dim">
-            Every difficulty has its own dedicated question pool — the game never relabels an easy
-            question as impossible. {ROUNDS_PER_GAME} rounds per match.
-          </p>
+          <p className="mt-5 text-xs leading-relaxed text-ink-dim">{t.poolNote(ROUNDS_PER_GAME)}</p>
         </aside>
       </div>
 
@@ -147,20 +137,10 @@ export function MenuScreen({ onMode, onHowTo }: { onMode: (m: Mode) => void; onH
         <div className="ticker">
           {[0, 1].map((dup) => (
             <div key={dup} className="flex shrink-0 items-center" aria-hidden={dup === 1}>
-              {[
-                `${stats.players.toLocaleString()}-PLAYER DATABASE`,
-                "5 DEDICATED DIFFICULTY POOLS — NEVER RELABELED",
-                `${stats.nationalTeams} NATIONAL TEAMS`,
-                `${stats.clubs} CLUBS`,
-                `${stats.questions.toLocaleString()}+ QUESTIONS`,
-                "NO BACK-TO-BACK REPEATS",
-                "RANDOM DIFFICULTY ROLLS THE POOL FIRST",
-                "GUESS CHALLENGES VALIDATED BEFORE KICK-OFF",
-                "EASY 100 • MEDIUM 200 • HARD 300 • EXTREME 500 • IMPOSSIBLE 1000",
-              ].map((t, i) => (
+              {t.ticker(stats).map((txt, i) => (
                 <span key={i} className="display flex items-center whitespace-nowrap text-[11px] tracking-[0.18em] text-ink-dim">
                   <span className="mx-4 inline-block opacity-70"><BallIcon size={13} /></span>
-                  {t}
+                  {txt}
                 </span>
               ))}
             </div>
@@ -169,7 +149,7 @@ export function MenuScreen({ onMode, onHowTo }: { onMode: (m: Mode) => void; onH
       </div>
 
       <footer className="flex flex-col items-center justify-center gap-3 text-center text-xs tracking-widest text-ink-dim/70 sm:flex-row sm:justify-between">
-        <span>ORIGINAL GAME-STYLE CRESTS &amp; PORTRAITS • NO OFFICIAL LOGOS • BUILT FOR FOOTBALL NERDS</span>
+        <span>{t.footerLine}</span>
         <MuteToggle />
       </footer>
     </div>
@@ -179,20 +159,30 @@ export function MenuScreen({ onMode, onHowTo }: { onMode: (m: Mode) => void; onH
 export function DifficultyScreen({
   mode, onPick, onBack,
 }: { mode: Mode; onPick: (d: DiffKey | "random") => void; onBack: () => void }) {
-  const modeTitle = MODES.find((m) => m.key === mode)?.title || "";
+  const { t } = useI18n();
+  const modeTitle = t.modes[mode].title;
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-8 md:py-12">
-      <button onClick={() => { sfx.click(); onBack(); }} className="mb-6 flex items-center gap-2 text-sm text-ink-dim transition-colors hover:text-white">
-        <ArrowIcon size={16} /> <span className="display tracking-[0.2em]">MAIN MENU</span>
-      </button>
+    <div className="mx-auto w-full max-w-3xl px-4 py-6 md:py-12">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <button onClick={() => { sfx.click(); onBack(); }} className="flex items-center gap-2 text-sm text-ink-dim transition-colors hover:text-white">
+          <ArrowIcon size={16} /> <span className="display tracking-[0.2em]">{t.mainMenu}</span>
+        </button>
+        <LangSwitch />
+      </div>
       <header className="anim-rise mb-8 text-center">
         <span className="display rounded bg-pitch-700/80 border border-pitch-line/25 px-3 py-1 text-[11px] tracking-[0.25em] text-ink-dim">{modeTitle}</span>
-        <h1 className="display text-outline mt-3 text-4xl font-bold tracking-wide text-white md:text-5xl">SELECT DIFFICULTY</h1>
-        <p className="mt-2 text-ink-dim">Each level draws from its own dedicated question pool.</p>
+        <h1 className="display text-outline mt-3 text-4xl font-bold tracking-wide text-white md:text-5xl">{t.selectDifficulty}</h1>
+        <p className="mt-2 text-ink-dim">{t.dedicatedLine}</p>
+        <p className="mt-1 text-xs text-ink-dim/70">{t.questionsNote}</p>
       </header>
       <div className="flex flex-col gap-3">
         {DIFF_ORDER.map((d, i) => {
           const meta = DIFFICULTY_CONFIG[d];
+          const poolCount = mode === "quiz"
+            ? t.poolQuiz(questionPools[d].length)
+            : mode === "national"
+              ? t.poolNational(NATIONAL_TEAM_POOLS[d].length)
+              : t.poolClub(CLUB_POOLS[d].length);
           return (
             <button
               key={d}
@@ -203,21 +193,16 @@ export function DifficultyScreen({
               <span className="h-14 w-2 rounded-full" style={{ background: meta.color, boxShadow: `0 0 14px ${meta.color}66` }} />
               <span className="min-w-0 flex-1">
                 <span className="flex flex-wrap items-center gap-2">
-                  <span className="display text-xl font-semibold tracking-wide text-white md:text-2xl">{meta.label}</span>
+                  <span className="display text-xl font-semibold tracking-wide text-white md:text-2xl">{t.diff[d].label}</span>
                   <span className="display rounded bg-pitch-900/80 px-2 py-0.5 text-[11px] text-gold-400" style={{ color: "var(--color-gold-400)" }}>
-                    {meta.points} PTS / ANSWER
+                    {t.n(meta.points)} {t.ptsPerAnswer}
                   </span>
                 </span>
                 <span className="mt-0.5 block text-sm text-ink-dim">
-                  {meta.tagline} •{" "}
-                  {mode === "quiz"
-                    ? `${questionPools[d].length} questions in dedicated pool`
-                    : mode === "national"
-                      ? `${NATIONAL_TEAM_POOLS[d].length} national teams in dedicated pool`
-                      : `${CLUB_POOLS[d].length} clubs in dedicated pool`}
+                  {t.diff[d].tag} • {poolCount}
                   {getBest(mode, d) > 0 && (
-                    <span className="display ml-2 rounded bg-pitch-900/80 px-1.5 py-0.5 text-[10px] tracking-wider text-gold-300" style={{ color: "var(--color-gold-300)" }}>
-                      ★ BEST {getBest(mode, d).toLocaleString()}
+                    <span className="display ms-2 rounded bg-pitch-900/80 px-1.5 py-0.5 text-[10px] tracking-wider text-gold-300" style={{ color: "var(--color-gold-300)" }}>
+                      {t.best(getBest(mode, d))}
                     </span>
                   )}
                 </span>
@@ -234,67 +219,49 @@ export function DifficultyScreen({
           <span className="h-14 w-2 rounded-full bg-gold-400" style={{ background: "var(--color-gold-400)" }} />
           <span className="min-w-0 flex-1">
             <span className="display text-xl font-semibold tracking-wide text-gold-300 md:text-2xl" style={{ color: "var(--color-gold-300)" }}>
-              RANDOM DIFFICULTY
+              {t.randomLabel}
             </span>
-            <span className="mt-0.5 block text-sm text-ink-dim">
-              A fresh difficulty is rolled before every round — then that level's pool is used. Chaos, but fair chaos.
-            </span>
+            <span className="mt-0.5 block text-sm text-ink-dim">{t.randomDesc}</span>
           </span>
           <span className="anim-float"><BallIcon size={26} /></span>
         </button>
       </div>
+      <p dir="ltr" className="display mt-6 text-center text-[10px] tracking-[0.2em] text-ink-dim/60">
+        EASY → MEDIUM → HARD → EXTREME HARD → IMPOSSIBLE
+      </p>
     </div>
   );
 }
 
 export function HowToScreen({ onBack }: { onBack: () => void }) {
-  const S = ({ title, children }: { title: string; children: ReactNode }) => (
-    <section className="glossy rounded-xl p-5 md:p-6">
-      <h2 className="display mb-3 text-lg font-semibold tracking-wide text-gold-400" style={{ color: "var(--color-gold-400)" }}>{title}</h2>
-      <div className="text-sm leading-relaxed text-ink-dim">{children}</div>
-    </section>
-  );
+  const { t } = useI18n();
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-8 md:py-12">
-      <button onClick={() => { sfx.click(); onBack(); }} className="mb-6 flex items-center gap-2 text-sm text-ink-dim transition-colors hover:text-white">
-        <ArrowIcon size={16} /> <span className="display tracking-[0.2em]">MAIN MENU</span>
-      </button>
-      <h1 className="display text-outline anim-rise mb-8 text-center text-4xl font-bold tracking-wide text-white md:text-5xl">HOW TO PLAY</h1>
+    <div className="mx-auto w-full max-w-3xl px-4 py-6 md:py-12">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <button onClick={() => { sfx.click(); onBack(); }} className="flex items-center gap-2 text-sm text-ink-dim transition-colors hover:text-white">
+          <ArrowIcon size={16} /> <span className="display tracking-[0.2em]">{t.mainMenu}</span>
+        </button>
+        <LangSwitch />
+      </div>
+      <h1 className="display text-outline anim-rise mb-8 text-center text-4xl font-bold tracking-wide text-white md:text-5xl">{t.howtoTitle}</h1>
       <div className="grid gap-4 md:grid-cols-2">
-        <S title="THE THREE MODES">
-          <p><strong className="text-white">Football Quiz</strong> — four options, one truth. Categories: Players, Clubs, National Teams, World Cup, Champions League, Records, History.</p>
-          <p className="mt-2"><strong className="text-white">Guess the National Team</strong> — 3–5 real internationals of one country. Pick the country from four original crests.</p>
-          <p className="mt-2"><strong className="text-white">Guess the Club</strong> — same idea, but the players share one club badge.</p>
-        </S>
-        <S title="THE REVEAL">
-          <p>After every answer you see <strong className="text-white">CORRECT!</strong> or <strong className="text-white">INCORRECT!</strong>, the right crest, every player portrait with names, and an explanation. The reveal happens even when you get it wrong — that's the lesson.</p>
-        </S>
-        <S title="FIVE REAL DIFFICULTIES">
-          <div className="flex flex-wrap gap-1.5 mb-2">
-            {DIFF_ORDER.map((d) => <DifficultyBadge key={d} diff={d} small />)}
-          </div>
-          <p>EASY is for casual fans; IMPOSSIBLE digs into 1960s Ballon d'Or winners and 1930s World Cup hat-tricks. Each level has a <strong className="text-white">separate pool</strong> — a question never jumps levels.</p>
-        </S>
-        <S title="SCORING & STREAKS">
-          <p>Easy 100 • Medium 200 • Hard 300 • Extreme Hard 500 • Impossible 1000 points per correct answer. Every straight correct stacks a <strong className="text-white">+10% streak bonus</strong> on top of the base — up to +50% at a five-in-a-row streak. Keep the flame alive for {ROUNDS_PER_GAME} rounds.</p>
-        </S>
-        <S title="RANDOMIZATION">
-          <p>Every restart shuffles questions, answer order, players, crests and challenge order. Recently used questions and challenges are set aside, so nothing repeats back-to-back while unused material remains. <strong className="text-white">Random Difficulty</strong> rolls a level first, then uses that level's pool — never the other way around.</p>
-        </S>
-        <S title="VALIDITY GUARANTEE">
-          <p>Guess challenges are generated from a verified database of 1,000+ players and validated before display: every shown player genuinely represented the nation or played for the club. No invented facts, ever.</p>
-        </S>
-        <S title="CONTROLS">
-          <p>
-            <strong className="text-white">Click / tap</strong> an answer • <strong className="text-white">1–4</strong> or{" "}
-            <strong className="text-white">A–D</strong> keys to answer • <strong className="text-white">Enter / Space</strong> for the next round •{" "}
-            <strong className="text-white">M</strong> to toggle sound • the <strong className="text-white">MENU</strong> button in the HUD quits to kick-off.
-          </p>
-        </S>
+        {t.howto.map((s, i) => (
+          <section key={s.title} className="glossy rounded-xl p-5 md:p-6 anim-rise" style={{ animationDelay: `${i * 60}ms` }}>
+            <h2 className="display mb-3 text-lg font-semibold tracking-wide text-gold-400" style={{ color: "var(--color-gold-400)" }}>{s.title}</h2>
+            <div className="text-sm leading-relaxed text-ink-dim">
+              {i === 2 && (
+                <div className="mb-2 flex flex-wrap gap-1.5">
+                  {DIFF_ORDER.map((d) => <DifficultyBadge key={d} diff={d} small />)}
+                </div>
+              )}
+              <Rich s={s.body} />
+            </div>
+          </section>
+        ))}
       </div>
       <div className="mt-6 text-center">
         <GameButton color="#0aa05b" size="md" onClick={() => { sfx.click(); onBack(); }}>
-          BACK TO KICK-OFF
+          {t.backToKickoff}
         </GameButton>
       </div>
     </div>
