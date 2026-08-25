@@ -1,5 +1,5 @@
 import {
-  Club, DiffKey, GuessChallenge, NationalTeam, Player, Question,
+  Club, DIFF_ORDER, DiffKey, GuessChallenge, NationalTeam, Player, Question,
 } from "./types";
 import { NATIONAL_TEAMS } from "../data/teams";
 import { CLUBS } from "../data/clubs";
@@ -66,7 +66,7 @@ function distractorClubs(correct: Club, player: Player, n: number, hardMode: boo
   return pickN(pool, n).map((c) => c.name);
 }
 
-function generateVerifiedQuestions(difficulty: DiffKey): Question[] {
+function generateVerifiedQuestions(difficulty: DiffKey, curatedTexts: Set<string>): Question[] {
   const tier = { easy: 1, medium: 2, hard: 3, extremeHard: 4, impossible: 5 }[difficulty];
   const players = shuffle(PLAYERS.filter((p) => p.tier === tier));
   const out: Question[] = [];
@@ -81,7 +81,7 @@ function generateVerifiedQuestions(difficulty: DiffKey): Question[] {
     const qText1 = p.era === "modern"
       ? `Which national team does ${p.name} represent?`
       : `Which national team did ${p.name} represent?`;
-    if (!seen.has(qText1)) {
+    if (!seen.has(qText1) && !curatedTexts.has(qText1)) {
       seen.add(qText1);
       const wrong = distractorCountries(country, 3);
       const options = shuffle([country.name, ...wrong]);
@@ -101,10 +101,9 @@ function generateVerifiedQuestions(difficulty: DiffKey): Question[] {
     if (p.clubIds.length > 0) {
       const correct = clubById.get(pick(p.clubIds));
       if (correct) {
-        const qText2 = `Which of these clubs did ${p.name} play for?`;
-        const key = qText2 + correct.id;
-        if (!seen.has(key)) {
-          seen.add(key);
+      const qText2 = `Which of these clubs did ${p.name} play for?`;
+      const key = qText2 + correct.id;
+      if (!seen.has(key) && !curatedTexts.has(qText2)) {          seen.add(key);
           const hardish = tier >= 3;
           const wrong = distractorClubs(correct, p, 3, hardish);
           if (wrong.length === 3) {
@@ -130,8 +129,11 @@ export const questionPools: Record<DiffKey, Question[]> = {
   easy: [], medium: [], hard: [], extremeHard: [], impossible: [],
 };
 (function buildPools() {
-  for (const d of ["easy", "medium", "hard", "extremeHard", "impossible"] as DiffKey[]) {
-    questionPools[d] = [...HANDCRAFTED[d], ...generateVerifiedQuestions(d)];
+  for (const d of DIFF_ORDER) {
+    const curated = HANDCRAFTED[d];
+    // Generated questions never duplicate curated wording in the same pool
+    const curatedTexts = new Set(curated.map((q) => q.text));
+    questionPools[d] = [...curated, ...generateVerifiedQuestions(d, curatedTexts)];
   }
 })();
 
@@ -195,6 +197,22 @@ const CHALLENGE_PLAYER_COUNT: Record<DiffKey, number> = {
 };
 
 interface Group { entityId: string; players: Player[] }
+
+/* ============================================================
+   DEDICATED GUESS-CHALLENGE POOLS — one per difficulty.
+   NATIONAL_TEAM_POOLS.extremeHard contains ONLY groups usable
+   at EXTREME HARD; CLUB_POOLS.impossible ONLY impossible ones.
+   Precomputed once so generation is fast and pools are stable.
+   ============================================================ */
+function buildAllPools(kind: "national" | "club"): Record<DiffKey, Group[]> {
+  const out = {} as Record<DiffKey, Group[]>;
+  for (const d of DIFF_ORDER) {
+    out[d] = buildGroups(kind, PLAYER_TIER_RANGE[d]);
+  }
+  return out;
+}
+export const NATIONAL_TEAM_POOLS: Record<DiffKey, Group[]> = buildAllPools("national");
+export const CLUB_POOLS: Record<DiffKey, Group[]> = buildAllPools("club");
 
 function buildGroups(kind: "national" | "club", playerTiers: number[]): Group[] {
   const groups: Group[] = [];
@@ -274,7 +292,8 @@ function validateChallenge(
 function generateChallenge(mode: "national" | "club", difficulty: DiffKey): GuessChallenge {
   const teamTiers = TEAM_TIER_RANGE[difficulty];
   const playerTiers = PLAYER_TIER_RANGE[difficulty];
-  let groups = buildGroups(mode, playerTiers);
+  // Draw from this difficulty's DEDICATED pool — never from other levels
+  let groups = (mode === "national" ? NATIONAL_TEAM_POOLS : CLUB_POOLS)[difficulty];
 
   // tier-aware weighting: prefer teams whose own tier matches the band
   const weightOf = (g: Group) => {

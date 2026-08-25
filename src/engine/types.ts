@@ -103,3 +103,6 @@ export const DIFFICULTY_CONFIG: Record<DiffKey, DifficultyMeta> = {
 };
 
 export const ROUNDS_PER_GAME = 10;
+
+/* Curated question row: [text, options(4), correctIndex, category, explanation] */
+export type QuestionTuple = [string, string[], number, string, string];

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { DIFFICULTY_CONFIG, DIFF_ORDER, DiffKey, Mode, ROUNDS_PER_GAME } from "../engine/types";
-import { dbStats, questionPools } from "../engine/engine";
+import { CLUB_POOLS, dbStats, NATIONAL_TEAM_POOLS, questionPools } from "../engine/engine";
 import { ArrowIcon, BallIcon, DifficultyBadge, GameButton, getBest, sfx, TrophyIcon } from "../ui/Chrome";
 
 const MODES: { key: Mode; n: string; title: string; desc: string }[] = [
@@ -182,7 +182,12 @@ export function DifficultyScreen({
                   </span>
                 </span>
                 <span className="mt-0.5 block text-sm text-ink-dim">
-                  {meta.tagline} • {questionPools[d].length} questions in pool
+                  {meta.tagline} •{" "}
+                  {mode === "quiz"
+                    ? `${questionPools[d].length} questions in dedicated pool`
+                    : mode === "national"
+                      ? `${NATIONAL_TEAM_POOLS[d].length} national teams in dedicated pool`
+                      : `${CLUB_POOLS[d].length} clubs in dedicated pool`}
                   {getBest(mode, d) > 0 && (
                     <span className="display ml-2 rounded bg-pitch-900/80 px-1.5 py-0.5 text-[10px] tracking-wider text-gold-300" style={{ color: "var(--color-gold-300)" }}>
                       ★ BEST {getBest(mode, d).toLocaleString()}
