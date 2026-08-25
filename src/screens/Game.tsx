@@ -1,7 +1,8 @@
 import { useEffect, useState, type CSSProperties } from "react";
+import confetti from "canvas-confetti";
 import {
   DIFFICULTY_CONFIG, DiffKey, GameResult, GuessChallenge, Mode, Question,
-  ROUNDS_PER_GAME, RoundResult,
+  ROUNDS_PER_GAME, RoundResult, STREAK_BONUS_MAX_STEPS, STREAK_BONUS_STEP_PCT,
 } from "../engine/types";
 import {
   clubById, getRandomChallenge, getRandomQuestion, playerById, resolveRandomDifficulty, teamById,
@@ -57,6 +58,11 @@ function CountUp({ value }: { value: number }) {
 
 const LETTERS = ["A", "B", "C", "D"];
 
+/* real hex values for confetti (CSS vars can't be parsed by canvas) */
+const DIFF_HEX: Record<DiffKey, string> = {
+  easy: "#22c55e", medium: "#38bdf8", hard: "#f59e0b", extremeHard: "#ef4444", impossible: "#c026d3",
+};
+
 export default function GameScreen({
   mode, difficulty, onExit, onPlayAgain, onChangeDifficulty, onMenu,
 }: {
@@ -93,6 +99,21 @@ export default function GameScreen({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [round]);
 
+  /* full-time confetti when it was a great match */
+  useEffect(() => {
+    if (round < ROUNDS_PER_GAME) return;
+    const cnt = results.filter((r) => r.correct).length;
+    if (cnt < 7 && !newBest) return;
+    const gold = ["#ffd257", "#f7b32b", "#f4f8ff", "#17c964"];
+    const timers = [
+      window.setTimeout(() => confetti({ particleCount: 130, spread: 85, origin: { y: 0.32 }, colors: gold, zIndex: 60, disableForReducedMotion: true }), 120),
+      window.setTimeout(() => confetti({ particleCount: 70, angle: 60, spread: 60, origin: { x: 0, y: 0.65 }, colors: gold, zIndex: 60, disableForReducedMotion: true }), 420),
+      window.setTimeout(() => confetti({ particleCount: 70, angle: 120, spread: 60, origin: { x: 1, y: 0.65 }, colors: gold, zIndex: 60, disableForReducedMotion: true }), 640),
+    ];
+    return () => timers.forEach((t) => clearTimeout(t));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [round, newBest]);
+
   /* keyboard play: 1-4 / A-D to answer, Enter/Space for next round */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -125,9 +146,16 @@ export default function GameScreen({
     if (revealed || !data) return;
     setChoice(i);
     const ok = data.question ? i === data.answerIdx : data.optionIds![i] === data.challenge!.teamId;
-    const pts = ok ? DIFFICULTY_CONFIG[data.difficulty].points : 0;
+    const base = DIFFICULTY_CONFIG[data.difficulty].points;
+    // streak bonus: +10% of base per straight correct already banked, capped at +50%
+    const bonus = ok ? Math.round((base * Math.min(streak, STREAK_BONUS_MAX_STEPS) * STREAK_BONUS_STEP_PCT) / 100) : 0;
+    const pts = ok ? base + bonus : 0;
     if (ok) {
       sfx.correct();
+      confetti({
+        particleCount: 80, spread: 72, startVelocity: 36, origin: { y: 0.38 },
+        colors: [DIFF_HEX[data.difficulty], "#ffd257", "#ffffff"], zIndex: 60, disableForReducedMotion: true,
+      });
       setScore((s) => s + pts);
       setStreak((s) => {
         const ns = s + 1;
@@ -139,7 +167,7 @@ export default function GameScreen({
       sfx.wrong();
       setStreak(0);
     }
-    setResults((r) => [...r, { correct: ok, questionId: data.question?.id || data.challenge!.id, difficulty: data.difficulty, points: pts }]);
+    setResults((r) => [...r, { correct: ok, questionId: data.question?.id || data.challenge!.id, difficulty: data.difficulty, points: pts, bonus }]);
   };
 
   const next = () => {
@@ -215,6 +243,7 @@ export default function GameScreen({
 
   if (!data) return null;
   const meta = DIFFICULTY_CONFIG[data.difficulty];
+  const lastBonus = results.length ? results[results.length - 1].bonus ?? 0 : 0;
 
   /* ================= HUD ================= */
   const hud = (
@@ -244,7 +273,11 @@ export default function GameScreen({
             {score.toLocaleString()}
           </span>
           {streak >= 2 && (
-            <span className="anim-flame inline-flex items-center gap-0.5 rounded-md bg-pitch-900/80 px-2 py-1 text-sm font-bold text-orange-300" style={{ color: "#ffb84d" }}>
+            <span
+              className="anim-flame inline-flex items-center gap-0.5 rounded-md bg-pitch-900/80 px-2 py-1 text-sm font-bold text-orange-300"
+              style={{ color: "#ffb84d" }}
+              title={`Streak bonus on next correct answer: +${Math.min(streak, STREAK_BONUS_MAX_STEPS) * STREAK_BONUS_STEP_PCT}%`}
+            >
               <FlameIcon size={15} />{streak}
             </span>
           )}
@@ -301,7 +334,8 @@ export default function GameScreen({
             {revealed && (
               <RevealFooter
                 correct={correct}
-                points={correct ? meta.points : 0}
+                points={correct ? results[results.length - 1]?.points ?? meta.points : 0}
+                bonus={lastBonus}
                 explanation={q.explanation}
                 isLast={isLast}
                 onNext={next}
@@ -396,7 +430,12 @@ export default function GameScreen({
                   <span className="display text-xl font-bold text-gold-400" style={{ color: "var(--color-gold-400)" }}>{team.name}</span>
                   {correct && (
                     <span className="anim-pop display rounded-md bg-pitch-900 px-3 py-1 text-lg text-win" style={{ animationDelay: "250ms" }}>
-                      +{meta.points} PTS
+                      +{results[results.length - 1]?.points ?? meta.points} PTS
+                      {lastBonus > 0 && (
+                        <span className="ml-2 text-[11px] tracking-wider text-gold-400" style={{ color: "var(--color-gold-400)" }}>
+                          INCL. +{lastBonus} STREAK
+                        </span>
+                      )}
                     </span>
                   )}
                 </div>
@@ -431,8 +470,8 @@ export default function GameScreen({
 
 /* shared quiz reveal footer */
 function RevealFooter({
-  correct, points, explanation, isLast, onNext,
-}: { correct: boolean; points: number; explanation?: string; isLast: boolean; onNext: () => void }) {
+  correct, points, bonus, explanation, isLast, onNext,
+}: { correct: boolean; points: number; bonus?: number; explanation?: string; isLast: boolean; onNext: () => void }) {
   return (
     <div className="anim-rise mt-6 rounded-xl border border-pitch-line/25 bg-pitch-900/70 p-5">
       <div className="flex flex-wrap items-center gap-3">
@@ -440,7 +479,16 @@ function RevealFooter({
           style={{ border: `3px solid ${correct ? "var(--color-win)" : "var(--color-lose)"}`, textShadow: "0 2px 0 rgba(2,6,20,0.8)" }}>
           {correct ? "CORRECT!" : "INCORRECT!"}
         </span>
-        {correct && <span className="display text-lg text-win">+{points} PTS</span>}
+        {correct && (
+          <span className="display text-lg text-win">
+            +{points} PTS
+            {bonus ? (
+              <span className="ml-2 align-middle text-[11px] tracking-wider text-gold-400" style={{ color: "var(--color-gold-400)" }}>
+                INCL. +{bonus} STREAK BONUS
+              </span>
+            ) : null}
+          </span>
+        )}
         <div className="ml-auto">
           <GameButton color={isLast ? "#f7b32b" : "#0aa05b"} shadowBottom={isLast ? "#7c4a03" : undefined} onClick={onNext}>
             {isLast ? "FULL TIME" : "NEXT ROUND"}

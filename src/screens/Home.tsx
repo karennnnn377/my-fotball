@@ -249,7 +249,7 @@ export function HowToScreen({ onBack }: { onBack: () => void }) {
           <p>EASY is for casual fans; IMPOSSIBLE digs into 1960s Ballon d'Or winners and 1930s World Cup hat-tricks. Each level has a <strong className="text-white">separate pool</strong> — a question never jumps levels.</p>
         </S>
         <S title="SCORING & STREAKS">
-          <p>Easy 100 • Medium 200 • Hard 300 • Extreme Hard 500 • Impossible 1000 points per correct answer. Consecutive correct answers build a <strong className="text-white">streak</strong> — keep the flame alive for {ROUNDS_PER_GAME} rounds.</p>
+          <p>Easy 100 • Medium 200 • Hard 300 • Extreme Hard 500 • Impossible 1000 points per correct answer. Every straight correct stacks a <strong className="text-white">+10% streak bonus</strong> on top of the base — up to +50% at a five-in-a-row streak. Keep the flame alive for {ROUNDS_PER_GAME} rounds.</p>
         </S>
         <S title="RANDOMIZATION">
           <p>Every restart shuffles questions, answer order, players, crests and challenge order. Recently used questions and challenges are set aside, so nothing repeats back-to-back while unused material remains. <strong className="text-white">Random Difficulty</strong> rolls a level first, then uses that level's pool — never the other way around.</p>

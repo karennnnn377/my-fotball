@@ -56,6 +56,7 @@ export interface RoundResult {
   questionId: string;
   difficulty: DiffKey;
   points: number;
+  bonus?: number; // streak bonus included in points
 }
 
 export interface GameResult {
@@ -103,6 +104,12 @@ export const DIFFICULTY_CONFIG: Record<DiffKey, DifficultyMeta> = {
 };
 
 export const ROUNDS_PER_GAME = 10;
+
+/* Streak bonus — configurable scoring on top of the base difficulty points.
+   Each consecutive correct answer adds STREAK_BONUS_STEP_PCT% of the base,
+   capped at STREAK_BONUS_MAX_STEPS steps (default: +10% ... +50% max). */
+export const STREAK_BONUS_STEP_PCT = 10;
+export const STREAK_BONUS_MAX_STEPS = 5;
 
 /* Curated question row: [text, options(4), correctIndex, category, explanation] */
 export type QuestionTuple = [string, string[], number, string, string];
