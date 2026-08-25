@@ -32,6 +32,20 @@ function weightedPick<T>(items: T[], weight: (t: T) => number): T {
   }
   return items[items.length - 1];
 }
+/* Weighted sampling WITHOUT replacement (spec #22/#23): inside a
+   difficulty band, deeper obscurity tiers are favoured, so an
+   IMPOSSIBLE squad digs deeper than an EXTREME HARD one, while an
+   EASY squad (single-tier band) stays perfectly uniform. */
+function pickWeightedN<T>(items: T[], n: number, weight: (t: T) => number): T[] {
+  const pool = items.slice();
+  const out: T[] = [];
+  while (out.length < n && pool.length > 0) {
+    const it = weightedPick(pool, weight);
+    out.push(it);
+    pool.splice(pool.indexOf(it), 1);
+  }
+  return out;
+}
 
 /* ============================================================
    LOOKUP MAPS
@@ -317,7 +331,8 @@ function generateChallenge(mode: "national" | "club", difficulty: DiffKey): Gues
     const target = CHALLENGE_PLAYER_COUNT[difficulty];
     const jitter = Math.random() < 0.35 ? 1 : 0;
     const count = Math.min(group.players.length, Math.max(3, target - jitter));
-    const players = pickN(group.players, count);
+    // deeper tiers get double weight per step — impossible really digs deeper
+    const players = pickWeightedN(group.players, count, (p) => Math.pow(2, p.tier - playerTiers[0]));
     // same-confederation / same-country distractors at EVERY level:
     // harder and matches the classic quiz feel (Japan -> Korea / Australia / Iran)
     const distractors = pickDistractorTeams(mode, group.entityId, true, players);
