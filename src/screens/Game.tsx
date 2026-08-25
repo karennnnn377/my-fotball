@@ -1,7 +1,7 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import confetti from "canvas-confetti";
 import {
-  DIFFICULTY_CONFIG, DiffKey, GameResult, GuessChallenge, Mode, Question,
+  DIFFICULTY_CONFIG, DIFF_ORDER, DiffKey, GameResult, GuessChallenge, Mode, Question,
   ROUNDS_PER_GAME, RoundResult, STREAK_BONUS_MAX_STEPS, STREAK_BONUS_STEP_PCT,
 } from "../engine/types";
 import {
@@ -10,7 +10,7 @@ import {
 import Crest from "../ui/Crest";
 import Portrait from "../ui/Portrait";
 import {
-  ArrowIcon, BallIcon, CheckIcon, DifficultyBadge, FlameIcon, GameButton, StatPlate, XIcon, getBest, saveBest, sfx,
+  ArrowIcon, BallIcon, CheckIcon, DifficultyBadge, FlameIcon, GameButton, MuteToggle, StatPlate, XIcon, getBest, saveBest, sfx,
 } from "../ui/Chrome";
 
 interface RoundData {
@@ -81,10 +81,40 @@ export default function GameScreen({
   const [best, setBest] = useState(0);
   const [results, setResults] = useState<RoundResult[]>([]);
   const [scoreKey, setScoreKey] = useState(0);
+  /* Random Difficulty roulette: a level is rolled FIRST (with a spin),
+     then ONLY that level's dedicated pool is used (spec #33 / #46). */
+  const [locked, setLocked] = useState(false);
+  const [spinDiff, setSpinDiff] = useState<DiffKey | null>(null);
 
   useEffect(() => {
-    setData(makeRound(mode, difficulty));
+    if (round >= ROUNDS_PER_GAME) return;
     setChoice(null);
+    if (difficulty === "random") {
+      setLocked(true);
+      setData(null);
+      const rolled = resolveRandomDifficulty();
+      // spin across the ladder, always land on the pre-rolled pool
+      const cycle = shuffle([...DIFF_ORDER, ...DIFF_ORDER, rolled]);
+      let i = 0;
+      setSpinDiff(cycle[0]);
+      sfx.tick();
+      const iv = window.setInterval(() => {
+        i++;
+        if (i < cycle.length) {
+          setSpinDiff(cycle[i]);
+          sfx.tick();
+        } else {
+          window.clearInterval(iv);
+          setSpinDiff(rolled);
+          sfx.roll();
+          setData(makeRound(mode, rolled));
+          setLocked(false);
+        }
+      }, 78);
+      return () => window.clearInterval(iv);
+    }
+    setSpinDiff(null);
+    setData(makeRound(mode, difficulty));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [round, mode, difficulty]);
 
@@ -121,7 +151,12 @@ export default function GameScreen({
         if (e.key === "Enter") { sfx.fanfare(); onPlayAgain(); }
         return;
       }
-      if (!data) return;
+      if (e.key.toLowerCase() === "m") {
+        sfx.toggle();
+        window.dispatchEvent(new Event("mdl-mute"));
+        return;
+      }
+      if (!data || locked) return;
       if (choice === null) {
         const map: Record<string, number> = { "1": 0, "2": 1, "3": 2, "4": 3, a: 0, b: 1, c: 2, d: 3 };
         const k = e.key.toLowerCase();
@@ -143,7 +178,7 @@ export default function GameScreen({
     : false;
 
   const answer = (i: number) => {
-    if (revealed || !data) return;
+    if (revealed || locked || !data) return;
     setChoice(i);
     const ok = data.question ? i === data.answerIdx : data.optionIds![i] === data.challenge!.teamId;
     const base = DIFFICULTY_CONFIG[data.difficulty].points;
@@ -224,12 +259,21 @@ export default function GameScreen({
           <div className="mt-5 flex flex-wrap justify-center gap-1.5">
             {results.map((r, i) => (
               <span key={i} className="rounded-md px-2 py-1 text-[11px] font-bold text-white"
-                style={{ background: r.correct ? "var(--color-win-deep)" : "var(--color-lose-deep)", border: "1px solid rgba(255,255,255,0.25)" }}
-                title={r.correct ? `+${r.points}` : "0"}>
+                style={{
+                  background: r.correct ? "var(--color-win-deep)" : "var(--color-lose-deep)",
+                  border: "1px solid rgba(255,255,255,0.25)",
+                  borderBottom: `3px solid ${DIFF_HEX[r.difficulty]}`,
+                }}
+                title={`${DIFFICULTY_CONFIG[r.difficulty].label} — ${r.correct ? `+${r.points}` : "0 pts"}`}>
                 {i + 1}{r.correct ? " ✓" : " ✕"}
               </span>
             ))}
           </div>
+          {difficulty === "random" && (
+            <p className="display mt-3 text-[10px] tracking-[0.2em] text-ink-dim">
+              CHIP EDGES SHOW EACH ROUND'S ROLLED DIFFICULTY
+            </p>
+          )}
 
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <GameButton color="#0aa05b" onClick={() => { sfx.fanfare(); onPlayAgain(); }}>PLAY AGAIN</GameButton>
@@ -241,8 +285,6 @@ export default function GameScreen({
     );
   }
 
-  if (!data) return null;
-  const meta = DIFFICULTY_CONFIG[data.difficulty];
   const lastBonus = results.length ? results[results.length - 1].bonus ?? 0 : 0;
 
   /* ================= HUD ================= */
@@ -257,8 +299,14 @@ export default function GameScreen({
         <span className="display text-xs tracking-[0.2em] text-ink-dim">
           {mode === "quiz" ? "FOOTBALL QUIZ" : mode === "national" ? "GUESS THE NATION" : "GUESS THE CLUB"}
         </span>
-        <DifficultyBadge diff={difficulty === "random" ? data.difficulty : difficulty} small />
-        {difficulty === "random" && <span className="display rounded bg-pitch-900/80 px-2 py-0.5 text-[10px] tracking-widest text-gold-400" style={{ color: "var(--color-gold-400)" }}>ROLLED</span>}
+        <span className={difficulty === "random" && locked ? "anim-flame inline-block" : "inline-block"}>
+          <DifficultyBadge diff={difficulty === "random" ? (spinDiff ?? data?.difficulty ?? "easy") : difficulty} small />
+        </span>
+        {difficulty === "random" && (
+          <span className="display rounded bg-pitch-900/80 px-2 py-0.5 text-[10px] tracking-widest text-gold-400" style={{ color: "var(--color-gold-400)" }}>
+            {locked ? "ROLLING" : "ROLLED"}
+          </span>
+        )}
 
         <div className="ml-auto flex items-center gap-3">
           {/* progress segments */}
@@ -281,10 +329,37 @@ export default function GameScreen({
               <FlameIcon size={15} />{streak}
             </span>
           )}
+          <MuteToggle size="sm" />
         </div>
       </div>
     </div>
   );
+
+  /* ============ RANDOM DIFFICULTY ROULETTE (between rounds) ============ */
+  if (locked || !data) {
+    return (
+      <div className="w-full pb-10">
+        {hud}
+        <div className="mx-auto w-full max-w-3xl px-4">
+          <div className="glossy-deep anim-rise rounded-2xl p-8 text-center md:p-12">
+            <div className="display mb-5 text-[11px] tracking-[0.35em] text-ink-dim">DIFFICULTY ROULETTE</div>
+            <div key={spinDiff ?? "idle"} className="anim-pop inline-block">
+              <DifficultyBadge diff={spinDiff ?? "easy"} />
+            </div>
+            <div className="mx-auto mt-7 h-2 w-60 max-w-full overflow-hidden rounded-full border border-pitch-line/25 bg-pitch-900">
+              <div className="anim-roulette-bar h-full rounded-full" style={{ background: "linear-gradient(90deg, #22c55e, #38bdf8, #f59e0b, #ef4444, #c026d3)" }} />
+            </div>
+            <p className="mx-auto mt-6 max-w-md text-sm leading-relaxed text-ink-dim">
+              A difficulty is rolled <span className="font-semibold text-white">first</span> — then only{" "}
+              <span className="font-semibold text-white">that level's dedicated pool</span> supplies the{" "}
+              {mode === "quiz" ? "question" : "challenge"}. Fair chaos.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  const meta = DIFFICULTY_CONFIG[data.difficulty];
 
   /* ================= QUIZ ================= */
   if (mode === "quiz" && data.question) {
@@ -378,11 +453,18 @@ export default function GameScreen({
             <div className="pointer-events-none absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white/20" />
             <div className="relative flex flex-wrap items-end justify-center gap-3 px-4 py-5 md:gap-6">
               {players.map((p, i) => (
-                <div key={p.id} className="anim-pop" style={{ animationDelay: `${i * 110}ms` }}>
-                  <Portrait player={p} color={color} size={88} showName />
+                /* mystery before the answer: neutral silhouette, NO team colours (spec #27).
+                   On reveal the card flips to the full-colour game portrait. */
+                <div key={`${p.id}-${revealed ? "rev" : "hid"}`} className="anim-pop" style={{ animationDelay: `${i * (revealed ? 70 : 110)}ms` }}>
+                  <Portrait player={p} color={color} size={88} showName mystery={!revealed} />
                 </div>
               ))}
             </div>
+            {!revealed && (
+              <div className="display relative pb-3 text-center text-[10px] tracking-[0.28em] text-gold-300" style={{ color: "var(--color-gold-300)" }}>
+                FACES HIDDEN — THE NAMES ARE YOUR ONLY CLUE
+              </div>
+            )}
           </div>
 
           {/* crest options */}

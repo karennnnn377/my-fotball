@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { DIFFICULTY_CONFIG, DIFF_ORDER, DiffKey, Mode, ROUNDS_PER_GAME } from "../engine/types";
 import { CLUB_POOLS, dbStats, NATIONAL_TEAM_POOLS, questionPools } from "../engine/engine";
-import { ArrowIcon, BallIcon, DifficultyBadge, GameButton, getBest, sfx, TrophyIcon } from "../ui/Chrome";
+import { ArrowIcon, BallIcon, DifficultyBadge, GameButton, getBest, MuteToggle, sfx, TrophyIcon } from "../ui/Chrome";
 
 const MODES: { key: Mode; n: string; title: string; desc: string }[] = [
   {
@@ -142,8 +142,35 @@ export function MenuScreen({ onMode, onHowTo }: { onMode: (m: Mode) => void; onH
         </aside>
       </div>
 
-      <footer className="text-center text-xs tracking-widest text-ink-dim/70">
-        ORIGINAL GAME-STYLE CRESTS &amp; PORTRAITS • NO OFFICIAL LOGOS • BUILT FOR FOOTBALL NERDS
+      {/* live ticker — the lobby never sleeps */}
+      <div className="ticker-wrap anim-rise rounded-lg border border-pitch-line/20 bg-pitch-900/70 py-2.5" style={{ animationDelay: "340ms" }}>
+        <div className="ticker">
+          {[0, 1].map((dup) => (
+            <div key={dup} className="flex shrink-0 items-center" aria-hidden={dup === 1}>
+              {[
+                `${stats.players.toLocaleString()}-PLAYER DATABASE`,
+                "5 DEDICATED DIFFICULTY POOLS — NEVER RELABELED",
+                `${stats.nationalTeams} NATIONAL TEAMS`,
+                `${stats.clubs} CLUBS`,
+                `${stats.questions.toLocaleString()}+ QUESTIONS`,
+                "NO BACK-TO-BACK REPEATS",
+                "RANDOM DIFFICULTY ROLLS THE POOL FIRST",
+                "GUESS CHALLENGES VALIDATED BEFORE KICK-OFF",
+                "EASY 100 • MEDIUM 200 • HARD 300 • EXTREME 500 • IMPOSSIBLE 1000",
+              ].map((t, i) => (
+                <span key={i} className="display flex items-center whitespace-nowrap text-[11px] tracking-[0.18em] text-ink-dim">
+                  <span className="mx-4 inline-block opacity-70"><BallIcon size={13} /></span>
+                  {t}
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <footer className="flex flex-col items-center justify-center gap-3 text-center text-xs tracking-widest text-ink-dim/70 sm:flex-row sm:justify-between">
+        <span>ORIGINAL GAME-STYLE CRESTS &amp; PORTRAITS • NO OFFICIAL LOGOS • BUILT FOR FOOTBALL NERDS</span>
+        <MuteToggle />
       </footer>
     </div>
   );
@@ -256,6 +283,13 @@ export function HowToScreen({ onBack }: { onBack: () => void }) {
         </S>
         <S title="VALIDITY GUARANTEE">
           <p>Guess challenges are generated from a verified database of 1,000+ players and validated before display: every shown player genuinely represented the nation or played for the club. No invented facts, ever.</p>
+        </S>
+        <S title="CONTROLS">
+          <p>
+            <strong className="text-white">Click / tap</strong> an answer • <strong className="text-white">1–4</strong> or{" "}
+            <strong className="text-white">A–D</strong> keys to answer • <strong className="text-white">Enter / Space</strong> for the next round •{" "}
+            <strong className="text-white">M</strong> to toggle sound • the <strong className="text-white">MENU</strong> button in the HUD quits to kick-off.
+          </p>
         </S>
       </div>
       <div className="mt-6 text-center">

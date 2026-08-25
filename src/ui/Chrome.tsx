@@ -1,4 +1,4 @@
-import { ButtonHTMLAttributes, ReactNode } from "react";
+import { ButtonHTMLAttributes, ReactNode, useEffect, useState } from "react";
 import { DIFFICULTY_CONFIG, DiffKey, Mode } from "../engine/types";
 
 /* ============ sound (tiny WebAudio synth, no assets) ============ */
@@ -30,6 +30,8 @@ function tone(freq: number, dur: number, type: OscillatorType, when = 0, gain = 
 }
 export const sfx = {
   click: () => tone(520, 0.07, "square", 0, 0.045),
+  tick: () => tone(880, 0.045, "square", 0, 0.028),
+  roll: () => tone(1175, 0.09, "square", 0, 0.05),
   correct: () => { tone(523, 0.12, "square", 0, 0.06); tone(659, 0.12, "square", 0.09, 0.06); tone(784, 0.2, "square", 0.18, 0.06); },
   wrong: () => { tone(196, 0.16, "sawtooth", 0, 0.05); tone(147, 0.24, "sawtooth", 0.12, 0.05); },
   fanfare: () => { [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.22, "square", i * 0.11, 0.06)); },
@@ -177,5 +179,39 @@ export function StatPlate({ label, value, accent }: { label: string; value: Reac
         {value}
       </div>
     </div>
+  );
+}
+
+/* ============ mute toggle (WebAudio synth, no assets) ============ */
+function SpeakerIcon({ off }: { off: boolean }) {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden>
+      <path d="M4 9 H8 L13 4.5 V19.5 L8 15 H4 Z" fill="currentColor" stroke="rgba(2,8,24,0.6)" strokeWidth="1.2" strokeLinejoin="round" />
+      {off ? (
+        <path d="M16.5 9 L21.5 15 M21.5 9 L16.5 15" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+      ) : (
+        <path d="M16 8.5 C18 10.5 18 13.5 16 15.5 M18.5 6 C22 9.3 22 14.7 18.5 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      )}
+    </svg>
+  );
+}
+export function MuteToggle({ size = "md" }: { size?: "sm" | "md" }) {
+  const [off, setOff] = useState(sfx.muted);
+  useEffect(() => {
+    // keep in sync with the "M" keyboard shortcut
+    const sync = () => setOff(sfx.muted);
+    window.addEventListener("mdl-mute", sync);
+    return () => window.removeEventListener("mdl-mute", sync);
+  }, []);
+  return (
+    <button
+      onClick={() => { setOff(sfx.toggle()); window.dispatchEvent(new Event("mdl-mute")); if (!sfx.muted) sfx.click(); }}
+      title={off ? "Unmute (M)" : "Mute (M)"}
+      aria-label={off ? "Unmute" : "Mute"}
+      className={`display inline-flex items-center gap-1.5 rounded-md border border-pitch-line/30 bg-pitch-900/80 text-ink-dim transition-all hover:text-white hover:border-pitch-line/60 hover:-translate-y-px ${size === "sm" ? "px-2 py-1" : "px-2.5 py-1.5"}`}
+    >
+      <SpeakerIcon off={off} />
+      <span className={`tracking-[0.15em] ${size === "sm" ? "text-[10px]" : "text-[11px]"}`}>{off ? "SOUND OFF" : "SOUND ON"}</span>
+    </button>
   );
 }
