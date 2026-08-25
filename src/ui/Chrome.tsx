@@ -1,5 +1,5 @@
 import { ButtonHTMLAttributes, ReactNode } from "react";
-import { DIFFICULTY_CONFIG, DiffKey } from "../engine/types";
+import { DIFFICULTY_CONFIG, DiffKey, Mode } from "../engine/types";
 
 /* ============ sound (tiny WebAudio synth, no assets) ============ */
 let ctx: AudioContext | null = null;
@@ -146,6 +146,26 @@ function shade(hex: string): string {
   const f = (v: number) => Math.max(0, Math.round(v * 0.45));
   const r = f((n >> 16) & 255), g = f((n >> 8) & 255), b = f(n & 255);
   return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, "0")}`;
+}
+
+/* ============ personal bests (localStorage) ============ */
+export function getBest(mode: Mode, diff: DiffKey | "random"): number {
+  try {
+    return Number(localStorage.getItem(`mdl-best-${mode}-${diff}`) || 0) || 0;
+  } catch {
+    return 0;
+  }
+}
+export function saveBest(mode: Mode, diff: DiffKey | "random", score: number): boolean {
+  try {
+    if (score > getBest(mode, diff)) {
+      localStorage.setItem(`mdl-best-${mode}-${diff}`, String(score));
+      return true;
+    }
+  } catch {
+    /* storage unavailable — play on without records */
+  }
+  return false;
 }
 
 /* ============ stat plate ============ */

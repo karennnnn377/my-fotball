@@ -177,15 +177,21 @@ const TEAM_TIER_RANGE: Record<DiffKey, number[]> = {
   easy: [1],
   medium: [1, 2],
   hard: [2, 3],
-  extremeHard: [3, 4],
+  extremeHard: [2, 3, 4],
   impossible: [3, 4, 5],
 };
+/* Player obscurity bands — IMPOSSIBLE deliberately digs deeper than
+   EXTREME HARD (tier 4-5 only), so the two levels never feel identical. */
 const PLAYER_TIER_RANGE: Record<DiffKey, number[]> = {
   easy: [1],
   medium: [1, 2],
   hard: [2, 3],
   extremeHard: [3, 4],
-  impossible: [3, 4, 5],
+  impossible: [4, 5],
+};
+/* Fewer shown players = harder. Easy shows 5, Impossible only 3. */
+const CHALLENGE_PLAYER_COUNT: Record<DiffKey, number> = {
+  easy: 5, medium: 4, hard: 4, extremeHard: 4, impossible: 3,
 };
 
 interface Group { entityId: string; players: Player[] }
@@ -206,9 +212,23 @@ function buildGroups(kind: "national" | "club", playerTiers: number[]): Group[] 
   return groups;
 }
 
-function pickDistractorTeams(kind: "national" | "club", correctId: string, preferSame: boolean): string[] {
+function pickDistractorTeams(
+  kind: "national" | "club", correctId: string, preferSame: boolean, players?: Player[],
+): string[] {
+  // Never offer an option that is ALSO true for every shown player
+  // (e.g. a club all of them played for) — that would make two "correct" answers.
+  const ambiguous = new Set<string>();
+  if (players && players.length > 0) {
+    if (kind === "club") {
+      for (const c of CLUBS) {
+        if (c.id !== correctId && players.every((p) => p.clubIds.includes(c.id))) ambiguous.add(c.id);
+      }
+    } else {
+      for (const p of players) ambiguous.add(p.countryId);
+    }
+  }
   const all = kind === "national" ? NATIONAL_TEAMS.map((t) => t.id) : CLUBS.map((c) => c.id);
-  const others = all.filter((id) => id !== correctId);
+  const others = all.filter((id) => id !== correctId && !ambiguous.has(id));
   if (kind === "national" && preferSame) {
     const correct = teamById.get(correctId)!;
     const sameConf = others.filter((id) => teamById.get(id)!.confederation === correct.confederation);
@@ -242,6 +262,11 @@ function validateChallenge(
   }
   for (const d of ch.distractorIds) {
     if (ch.type === "national" ? !teamById.has(d) : !clubById.has(d)) return false;
+    if (ch.type === "club") {
+      // a distractor club that EVERY shown player played for would be a second correct answer
+      const shown = ch.playerIds.map((id) => playerById.get(id)!);
+      if (shown.every((p) => p.clubIds.includes(d))) return false;
+    }
   }
   return true;
 }
@@ -269,10 +294,14 @@ function generateChallenge(mode: "national" | "club", difficulty: DiffKey): Gues
       if (groups.length === 0) break;
     }
     const group = weightedPick(groups, weightOf);
-    const count = 3 + Math.floor(Math.random() * Math.min(3, group.players.length - 2)); // 3..5
-    const players = pickN(group.players, Math.min(count, group.players.length));
-    const preferSame = difficulty === "easy" || difficulty === "medium";
-    const distractors = pickDistractorTeams(mode, group.entityId, preferSame);
+    // difficulty-specific squad size (easy 5 ... impossible 3), with light jitter
+    const target = CHALLENGE_PLAYER_COUNT[difficulty];
+    const jitter = Math.random() < 0.35 ? 1 : 0;
+    const count = Math.min(group.players.length, Math.max(3, target - jitter));
+    const players = pickN(group.players, count);
+    // same-confederation / same-country distractors at EVERY level:
+    // harder and matches the classic quiz feel (Japan -> Korea / Australia / Iran)
+    const distractors = pickDistractorTeams(mode, group.entityId, true, players);
     // identity = team + player SET (order must not matter)
     const identity = `${difficulty}:${mode}:${group.entityId}:${players.map((p) => p.id).sort().join("+")}`;
     if (recentChallenges.includes(identity)) continue; // no immediate duplicates
@@ -299,7 +328,7 @@ function generateChallenge(mode: "national" | "club", difficulty: DiffKey): Gues
     teamId: group.entityId,
     playerIds: players.map((p) => p.id),
     difficulty,
-    distractorIds: pickDistractorTeams(mode, group.entityId, false),
+    distractorIds: pickDistractorTeams(mode, group.entityId, true, players),
   };
   return ch;
 }

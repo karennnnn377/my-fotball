@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { DIFFICULTY_CONFIG, DIFF_ORDER, DiffKey, Mode, ROUNDS_PER_GAME } from "../engine/types";
 import { dbStats, questionPools } from "../engine/engine";
-import { ArrowIcon, BallIcon, DifficultyBadge, GameButton, sfx, TrophyIcon } from "../ui/Chrome";
+import { ArrowIcon, BallIcon, DifficultyBadge, GameButton, getBest, sfx, TrophyIcon } from "../ui/Chrome";
 
 const MODES: { key: Mode; n: string; title: string; desc: string }[] = [
   {
@@ -181,7 +181,14 @@ export function DifficultyScreen({
                     {meta.points} PTS / ANSWER
                   </span>
                 </span>
-                <span className="mt-0.5 block text-sm text-ink-dim">{meta.tagline} • {questionPools[d].length} questions in pool</span>
+                <span className="mt-0.5 block text-sm text-ink-dim">
+                  {meta.tagline} • {questionPools[d].length} questions in pool
+                  {getBest(mode, d) > 0 && (
+                    <span className="display ml-2 rounded bg-pitch-900/80 px-1.5 py-0.5 text-[10px] tracking-wider text-gold-300" style={{ color: "var(--color-gold-300)" }}>
+                      ★ BEST {getBest(mode, d).toLocaleString()}
+                    </span>
+                  )}
+                </span>
               </span>
               <span style={{ color: meta.color }}><ArrowIcon dir="right" size={24} /></span>
             </button>

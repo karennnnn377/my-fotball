@@ -107,7 +107,7 @@ Michael Keane|england|man-united,everton,burnley|4|modern|DF
 Mark Hateley|england|portsmouth,milan,monaco,rangers|5|classic|FW
 Paul Ince|england|man-united,inter,liverpool|4|modern|MF
 Dennis Wise|england|chelsea,leeds|5|modern|MF
-Dean Dixie|england|everton|5|legend|FW
+Dixie Dean|england|everton|5|legend|FW
 Steve Bloomer|england|derby|5|legend|FW
 Charlie George|england|arsenal|5|classic|FW
 Nat Lofthouse|england|bolton|5|legend|FW

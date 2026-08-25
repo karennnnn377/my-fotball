@@ -295,7 +295,6 @@ Patson Daka|zambia|salzburg,leicester|3|modern|FW
 Fashion Sakala|zambia|rangers|4|modern|FW
 Kalusha Bwalya|zambia|psv|4|classic|FW
 Enock Mwepu|zambia|salzburg,brighton|4|modern|MF
-Charly Musonda|zambia|chelsea,celtic,betis|5|modern|MF
 Marvelous Nakamba|zimbabwe|club-brugge,aston-villa,luton|4|modern|MF
 Knowledge Musona|zimbabwe|anderlecht|5|modern|FW
 Khama Billiat|zimbabwe|kaizer-chiefs|5|modern|FW

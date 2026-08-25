@@ -9,7 +9,7 @@ import {
 import Crest from "../ui/Crest";
 import Portrait from "../ui/Portrait";
 import {
-  ArrowIcon, BallIcon, CheckIcon, DifficultyBadge, FlameIcon, GameButton, StatPlate, XIcon, sfx,
+  ArrowIcon, BallIcon, CheckIcon, DifficultyBadge, FlameIcon, GameButton, StatPlate, XIcon, getBest, saveBest, sfx,
 } from "../ui/Chrome";
 
 interface RoundData {
@@ -82,6 +82,39 @@ export default function GameScreen({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [round, mode, difficulty]);
 
+  /* personal best — recorded once at full time */
+  const [newBest, setNewBest] = useState(false);
+  const [prevBest, setPrevBest] = useState(0);
+  useEffect(() => {
+    if (round >= ROUNDS_PER_GAME) {
+      setPrevBest(getBest(mode, difficulty));
+      setNewBest(saveBest(mode, difficulty, score));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [round]);
+
+  /* keyboard play: 1-4 / A-D to answer, Enter/Space for next round */
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (round >= ROUNDS_PER_GAME) {
+        if (e.key === "Enter") { sfx.fanfare(); onPlayAgain(); }
+        return;
+      }
+      if (!data) return;
+      if (choice === null) {
+        const map: Record<string, number> = { "1": 0, "2": 1, "3": 2, "4": 3, a: 0, b: 1, c: 2, d: 3 };
+        const k = e.key.toLowerCase();
+        const total = data.options?.length ?? data.optionIds?.length ?? 0;
+        if (k in map && map[k] < total) answer(map[k]);
+      } else if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        next();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
+
   const revealed = choice !== null;
   const isLast = round >= ROUNDS_PER_GAME - 1;
   const correct = revealed && data
@@ -145,6 +178,13 @@ export default function GameScreen({
             <CountUp value={score} />
           </div>
           <div className="display text-[11px] tracking-[0.3em] text-ink-dim">POINTS</div>
+          <div className="display mt-1 h-5 text-[11px] tracking-[0.3em] text-ink-dim">
+            {newBest ? (
+              <span className="anim-pop inline-block font-bold text-gold-400" style={{ color: "var(--color-gold-400)" }}>★ NEW PERSONAL BEST ★</span>
+            ) : prevBest > 0 ? (
+              <span>PERSONAL BEST {prevBest.toLocaleString()}</span>
+            ) : null}
+          </div>
 
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <StatPlate label="CORRECT" value={`${results.filter((r) => r.correct).length}/${ROUNDS_PER_GAME}`} accent="var(--color-win)" />

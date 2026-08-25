@@ -1,6 +1,6 @@
 // Name|countryId|clubIds(comma)|tier|era|position
 export const RAW_PLAYERS_1 = `
-Pelé|brazil|santos,fluminense|1|legend|FW
+Pelé|brazil|santos,ny-cosmos|1|legend|FW
 Garrincha|brazil|botafogo,corinthians|4|legend|FW
 Zico|brazil|flamengo,udinese|2|classic|MF
 Sócrates|brazil|corinthians,botafogo|3|classic|MF
@@ -203,7 +203,7 @@ Marcelo Zalayeta|uruguay|penarol,juventus,napoli|5|modern|FW
 Darío Rodríguez|uruguay|schalke,penarol|5|modern|DF
 Egidio Arévalo Ríos|uruguay|penarol,monterrey|5|modern|MF
 James Rodríguez|colombia|porto,monaco,real-madrid,bayern,everton|1|modern|MF
-Radamel Falcao|colombia|millonarios,river,porto,atletico,monaco,man-united,chelsea|1|modern|FW
+Radamel Falcao|colombia|river,porto,atletico,monaco,man-united,chelsea|1|modern|FW
 Juan Cuadrado|colombia|udinese,fiorentina,chelsea,juventus,inter|2|modern|FW
 David Ospina|colombia|atletico-nacional,nice,arsenal,napoli,al-nassr|2|modern|GK
 Yerry Mina|colombia|palmeiras,barcelona,everton,fiorentina,cagliari|3|modern|DF
