@@ -70,10 +70,17 @@ body {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(60% 40% at 12% 0%, rgba(120, 190, 255, 0.14), transparent 60%),
-    radial-gradient(60% 40% at 88% 0%, rgba(120, 190, 255, 0.12), transparent 60%),
-    radial-gradient(90% 55% at 50% 112%, rgba(23, 201, 100, 0.10), transparent 62%),
-    linear-gradient(180deg, transparent 55%, rgba(3, 8, 26, 0.65));
+    /* floodlight cones from the top corners */
+    radial-gradient(46% 58% at 8% -10%, rgba(198, 228, 255, 0.20), transparent 62%),
+    radial-gradient(46% 58% at 92% -10%, rgba(198, 228, 255, 0.17), transparent 62%),
+    /* stand glow */
+    radial-gradient(60% 40% at 12% 0%, rgba(120, 190, 255, 0.13), transparent 60%),
+    radial-gradient(60% 40% at 88% 0%, rgba(120, 190, 255, 0.11), transparent 60%),
+    /* pitch glow at the bottom */
+    radial-gradient(90% 55% at 50% 112%, rgba(23, 201, 100, 0.14), transparent 62%),
+    /* vignette for foreground depth */
+    radial-gradient(120% 100% at 50% 42%, transparent 56%, rgba(2, 6, 18, 0.52) 100%),
+    linear-gradient(180deg, transparent 55%, rgba(3, 8, 26, 0.68));
 }
 .pitch-arc {
   position: fixed;
@@ -224,3 +231,82 @@ html[lang="fa"] .display, html[lang="ar"] .display { line-height: 1.4; }
 /* language switcher buttons */
 .lang-btn { font-family: var(--font-display); cursor: pointer; border: 1px solid transparent; }
 .lang-btn:not(:hover):not([aria-pressed="true"]) { border-color: rgba(143, 184, 238, 0.18); }
+
+/* ============================================================
+   STADIUM ATMOSPHERE — mown grass stripes + drifting dust
+   (both sit behind the UI, pointer-events disabled)
+   ============================================================ */
+body::before {
+  content: "";
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  height: 26vh;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(90deg, rgba(23, 201, 100, 0.05) 0 90px, transparent 90px 180px),
+    linear-gradient(180deg, transparent, rgba(10, 66, 38, 0.35));
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 55%);
+  mask-image: linear-gradient(180deg, transparent, #000 55%);
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  opacity: 0.16;
+  box-shadow:
+    8vw 22vh 0 0 rgba(255,255,255,0.5), 16vw 64vh 0 0 rgba(255,255,255,0.35),
+    24vw 38vh 0 0 rgba(255,255,255,0.4), 33vw 80vh 0 0 rgba(255,255,255,0.3),
+    41vw 14vh 0 0 rgba(255,255,255,0.45), 52vw 56vh 0 0 rgba(255,255,255,0.3),
+    61vw 30vh 0 0 rgba(255,255,255,0.5), 70vw 74vh 0 0 rgba(255,255,255,0.32),
+    78vw 20vh 0 0 rgba(255,255,255,0.4), 86vw 48vh 0 0 rgba(255,255,255,0.36),
+    93vw 70vh 0 0 rgba(255,255,255,0.42), 12vw 88vh 0 0 rgba(255,255,255,0.3),
+    47vw 90vh 0 0 rgba(255,255,255,0.34), 66vw 8vh 0 0 rgba(255,255,255,0.4);
+  animation: dustDrift 34s ease-in-out infinite alternate;
+}
+@keyframes dustDrift {
+  from { transform: translateY(0); }
+  to { transform: translateY(-46px); }
+}
+
+/* ============================================================
+   GRAPHICS PASS — richer rings, specular lines, button glow
+   ============================================================ */
+.portrait-ring {
+  box-shadow:
+    0 10px 22px rgba(2, 6, 20, 0.65),
+    0 0 0 3px #f4f8ff,
+    0 0 0 4.5px rgba(202, 162, 63, 0.85),
+    0 0 0 7px rgba(11, 28, 58, 0.9),
+    0 0 18px rgba(143, 184, 238, 0.22);
+}
+.glossy::after, .glossy-deep::after {
+  content: "";
+  position: absolute;
+  left: 6%; right: 6%; top: 0;
+  height: 1px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  pointer-events: none;
+}
+.btn-game:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 0 var(--shadow-bottom, #0a5c30), 0 12px 26px rgba(2, 6, 20, 0.55), 0 0 20px rgba(255, 210, 87, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+.plate {
+  background:
+    radial-gradient(120% 90% at 50% -20%, rgba(255, 255, 255, 0.14), transparent 55%),
+    linear-gradient(180deg, #16407f, #0c2a57);
+}
+
+/* formation-style stagger for the guess-mode lineup */
+.lineup > div:nth-child(even) { margin-top: 16px; }
+@media (max-width: 640px) {
+  .lineup > div:nth-child(even) { margin-top: 10px; }
+}

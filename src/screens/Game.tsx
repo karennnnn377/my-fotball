@@ -430,6 +430,7 @@ export default function GameScreen({
   const team = ch.type === "national" ? teamById.get(ch.teamId)! : clubById.get(ch.teamId)!;
   const players = ch.playerIds.map((id) => playerById.get(id)!);
   const color = team.c1;
+  const color2 = team.c2;
   const namesList = players.map((p) => p.name).join(lang === "en" ? ", " : "، ");
 
   return (
@@ -455,12 +456,12 @@ export default function GameScreen({
               style={{ backgroundImage: "repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 44px, transparent 44px 88px)" }} />
             <div className="pointer-events-none absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-white/20" />
             <div className="pointer-events-none absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white/20" />
-            <div className="relative flex flex-wrap items-end justify-center gap-3 px-4 py-5 md:gap-6">
+            <div className="lineup relative flex flex-wrap items-end justify-center gap-3 px-4 py-5 md:gap-6">
               {players.map((p, i) => (
                 /* mystery before the answer: neutral silhouette, NO team colours (spec #27).
                    On reveal the card flips to the full-colour game portrait. */
                 <div key={`${p.id}-${revealed ? "rev" : "hid"}`} className="anim-pop" style={{ animationDelay: `${i * (revealed ? 70 : 110)}ms` }}>
-                  <Portrait player={p} color={color} size={88} showName mystery={!revealed} />
+                  <Portrait player={p} color={color} color2={color2} size={88} showName mystery={!revealed} />
                 </div>
               ))}
             </div>
@@ -533,7 +534,7 @@ export default function GameScreen({
                   <div className="flex flex-wrap gap-3">
                     {players.map((p, i) => (
                       <div key={p.id} className="anim-pop flex flex-col items-center" style={{ animationDelay: `${120 + i * 90}ms` }}>
-                        <Portrait player={p} color={color} size={64} showName />
+                        <Portrait player={p} color={color} color2={color2} size={64} showName />
                       </div>
                     ))}
                   </div>
