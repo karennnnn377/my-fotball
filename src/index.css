@@ -1,0 +1,312 @@
+@import "@fontsource/oswald/500.css";
+@import "@fontsource/oswald/600.css";
+@import "@fontsource/oswald/700.css";
+@import "@fontsource/titillium-web/400.css";
+@import "@fontsource/titillium-web/600.css";
+@import "@fontsource/titillium-web/700.css";
+@import "@fontsource/lalezar/400.css";
+@import "@fontsource/cairo/700.css";
+@import "@fontsource/cairo/800.css";
+@import "@fontsource/vazirmatn/400.css";
+@import "@fontsource/vazirmatn/700.css";
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Oswald", "Arial Narrow", sans-serif;
+  --font-body: "Titillium Web", "Segoe UI", sans-serif;
+  --color-pitch-950: #040c1e;
+  --color-pitch-900: #071531;
+  --color-pitch-800: #0a2148;
+  --color-pitch-700: #103063;
+  --color-pitch-600: #1a4285;
+  --color-pitch-500: #2757a8;
+  --color-pitch-line: #8fb8ee;
+  --color-ink: #eaf3ff;
+  --color-ink-dim: #9db4d8;
+  --color-gold-300: #ffe08a;
+  --color-gold-400: #ffd257;
+  --color-gold-500: #f7b32b;
+  --color-gold-600: #d18f12;
+  --color-win: #17c964;
+  --color-win-deep: #0a8f47;
+  --color-lose: #ff4d5e;
+  --color-lose-deep: #b81f30;
+  --color-d-easy: #22c55e;
+  --color-d-medium: #38bdf8;
+  --color-d-hard: #f59e0b;
+  --color-d-extreme: #ef4444;
+  --color-d-impossible: #c026d3;
+}
+
+html, body, #root { min-height: 100%; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--color-ink);
+  background: #040c1e;
+  overflow-x: hidden;
+}
+
+/* ===== layered stadium background ===== */
+.bg-stadium {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(120% 90% at 50% -10%, #12386f 0%, #0a2148 42%, #050f26 78%, #03081a 100%);
+}
+.bg-stadium::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='none' stroke='%238fb8ee' stroke-opacity='0.07' stroke-width='2'%3E%3Cpath d='M70 12l34 25-13 40H49L36 37z'/%3E%3Cpath d='M70 12v-12M34 25L22 18M49 77l-9 12M91 77l9 12M104 25l12-7'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 140px 140px;
+  animation: patternDrift 90s linear infinite;
+}
+.bg-stadium::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    /* floodlight cones from the top corners */
+    radial-gradient(46% 58% at 8% -10%, rgba(198, 228, 255, 0.20), transparent 62%),
+    radial-gradient(46% 58% at 92% -10%, rgba(198, 228, 255, 0.17), transparent 62%),
+    /* stand glow */
+    radial-gradient(60% 40% at 12% 0%, rgba(120, 190, 255, 0.13), transparent 60%),
+    radial-gradient(60% 40% at 88% 0%, rgba(120, 190, 255, 0.11), transparent 60%),
+    /* pitch glow at the bottom */
+    radial-gradient(90% 55% at 50% 112%, rgba(23, 201, 100, 0.14), transparent 62%),
+    /* vignette for foreground depth */
+    radial-gradient(120% 100% at 50% 42%, transparent 56%, rgba(2, 6, 18, 0.52) 100%),
+    linear-gradient(180deg, transparent 55%, rgba(3, 8, 26, 0.68));
+}
+.pitch-arc {
+  position: fixed;
+  bottom: -38vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150vw;
+  height: 60vh;
+  border: 3px solid rgba(143, 184, 238, 0.16);
+  border-radius: 50%;
+  z-index: -1;
+  pointer-events: none;
+}
+.pitch-arc::before {
+  content: "";
+  position: absolute;
+  inset: 40px;
+  border: 2px solid rgba(143, 184, 238, 0.09);
+  border-radius: 50%;
+}
+.sheen-sweep {
+  position: fixed;
+  top: -20%;
+  left: -30%;
+  width: 55%;
+  height: 150%;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent, rgba(160, 210, 255, 0.045) 45%, rgba(160, 210, 255, 0.09) 50%, rgba(160, 210, 255, 0.045) 55%, transparent);
+  animation: sweep 14s ease-in-out infinite;
+}
+
+@keyframes patternDrift { from { background-position: 0 0; } to { background-position: 560px 280px; } }
+@keyframes sweep { 0%, 100% { transform: translateX(-10%) skewX(-8deg); } 50% { transform: translateX(310%) skewX(-8deg); } }
+
+/* ===== glossy game surfaces ===== */
+.glossy {
+  position: relative;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.02) 38%, rgba(2, 8, 24, 0.25) 100%), #0e2a56;
+  border: 1px solid rgba(143, 184, 238, 0.35);
+  box-shadow: 0 10px 30px rgba(2, 6, 20, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 -2px 0 rgba(2, 6, 20, 0.35);
+}
+.glossy-deep {
+  position: relative;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.015) 40%, rgba(2, 8, 24, 0.3) 100%), #0a2148;
+  border: 1px solid rgba(143, 184, 238, 0.28);
+  box-shadow: 0 16px 44px rgba(2, 6, 20, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+.plate {
+  background: linear-gradient(180deg, #16407f, #0c2a57);
+  border: 1px solid rgba(143, 184, 238, 0.35);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 4px 12px rgba(2, 6, 20, 0.5);
+}
+
+.btn-game {
+  position: relative;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow: 0 5px 0 var(--shadow-bottom, #0a5c30), 0 10px 22px rgba(2, 6, 20, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition: transform 0.09s ease, box-shadow 0.09s ease, filter 0.15s ease;
+  cursor: pointer;
+  user-select: none;
+}
+.btn-game:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-game:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--shadow-bottom, #0a5c30), 0 4px 10px rgba(2, 6, 20, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.4); }
+.btn-game:disabled { opacity: 0.55; cursor: default; filter: grayscale(0.3); }
+
+.answer-card { transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease, border-color 0.12s ease; cursor: pointer; }
+.answer-card:hover:not(:disabled) { transform: translateY(-3px) scale(1.012); filter: brightness(1.12); box-shadow: 0 14px 30px rgba(2, 6, 20, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.28); }
+.answer-card:active:not(:disabled) { transform: translateY(1px) scale(0.995); }
+
+.mode-card { transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease; }
+.mode-card:hover { transform: translateY(-5px) scale(1.015) rotate(-0.4deg); filter: brightness(1.1); box-shadow: 0 22px 46px rgba(2, 6, 20, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.3); }
+
+/* ===== animations ===== */
+@keyframes popIn { 0% { opacity: 0; transform: scale(0.7); } 65% { transform: scale(1.06); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes riseIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes shakeX { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-8px); } 40% { transform: translateX(8px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(5px); } }
+@keyframes scorePop { 0% { transform: scale(1); } 40% { transform: scale(1.35); color: #ffd257; } 100% { transform: scale(1); } }
+@keyframes glowPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 210, 87, 0.45); } 50% { box-shadow: 0 0 26px 4px rgba(255, 210, 87, 0.16); } }
+@keyframes flameFlick { 0%, 100% { transform: scale(1) rotate(-2deg); } 50% { transform: scale(1.18) rotate(3deg); } }
+@keyframes floatY { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+@keyframes spinBall { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes stampIn { 0% { opacity: 0; transform: scale(2.2) rotate(-14deg); } 70% { opacity: 1; transform: scale(0.94) rotate(-7deg); } 100% { opacity: 1; transform: scale(1) rotate(-8deg); } }
+@keyframes barFill { from { width: 0; } }
+@keyframes rouletteBar { 0% { transform: translateX(-115%); } 100% { transform: translateX(330%); } }
+@keyframes tickerScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+.anim-roulette-bar { width: 45%; animation: rouletteBar 0.72s linear infinite; }
+
+/* live menu ticker */
+.ticker-wrap { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+.ticker { display: flex; width: max-content; animation: tickerScroll 38s linear infinite; will-change: transform; }
+.ticker-wrap:hover .ticker { animation-play-state: paused; }
+
+.anim-pop { animation: popIn 0.32s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+.anim-rise { animation: riseIn 0.4s cubic-bezier(0.2, 0.9, 0.3, 1) both; }
+.anim-shake { animation: shakeX 0.42s ease both; }
+.anim-score { animation: scorePop 0.5s ease both; }
+.anim-stamp { animation: stampIn 0.4s cubic-bezier(0.2, 1.2, 0.35, 1) both; }
+.anim-float { animation: floatY 4.5s ease-in-out infinite; }
+.anim-flame { animation: flameFlick 0.7s ease-in-out infinite; transform-origin: bottom center; }
+.anim-glow { animation: glowPulse 1.8s ease-in-out infinite; }
+.anim-spin-slow { animation: spinBall 16s linear infinite; }
+
+.display { font-family: var(--font-display); text-transform: uppercase; }
+.text-outline { text-shadow: 0 2px 0 rgba(2, 6, 20, 0.9), 0 0 22px rgba(0, 0, 0, 0.4); }
+
+.portrait-ring {
+  box-shadow: 0 6px 16px rgba(2, 6, 20, 0.6), 0 0 0 3px #f4f8ff, 0 0 0 5px rgba(143, 184, 238, 0.4), inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: #071531; }
+::-webkit-scrollbar-thumb { background: #1a4285; border-radius: 8px; border: 2px solid #071531; }
+::-webkit-scrollbar-thumb:hover { background: #2757a8; }
+
+/* ============================================================
+   TRILINGUAL TYPE SYSTEM (EN / FA / AR)
+   Persian display: Lalezar — a punchy Persian poster face.
+   Arabic display:  Cairo ExtraBold — geometric & sporty.
+   Shared body:     Vazirmatn — full Persian + Arabic coverage.
+   ============================================================ */
+html[lang="fa"] {
+  --font-display: "Lalezar", "Oswald", "Arial Narrow", sans-serif;
+  --font-body: "Vazirmatn", "Titillium Web", "Segoe UI", sans-serif;
+}
+html[lang="ar"] {
+  --font-display: "Cairo", "Oswald", "Arial Narrow", sans-serif;
+  --font-body: "Vazirmatn", "Titillium Web", "Segoe UI", sans-serif;
+}
+html[lang="fa"] body, html[lang="ar"] body { line-height: 1.7; }
+
+/* letter-spacing breaks Arabic-script letter joining — never allow it */
+html[lang="fa"] *, html[lang="ar"] * { letter-spacing: normal !important; }
+
+/* directional icons (arrows) mirror themselves in RTL layouts */
+[dir="rtl"] .rtl-flip { transform: scaleX(-1); }
+
+/* Persian/Arabic display faces need a friendlier line height */
+html[lang="fa"] .display, html[lang="ar"] .display { line-height: 1.4; }
+
+/* language switcher buttons */
+.lang-btn { font-family: var(--font-display); cursor: pointer; border: 1px solid transparent; }
+.lang-btn:not(:hover):not([aria-pressed="true"]) { border-color: rgba(143, 184, 238, 0.18); }
+
+/* ============================================================
+   STADIUM ATMOSPHERE — mown grass stripes + drifting dust
+   (both sit behind the UI, pointer-events disabled)
+   ============================================================ */
+body::before {
+  content: "";
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  height: 26vh;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(90deg, rgba(23, 201, 100, 0.05) 0 90px, transparent 90px 180px),
+    linear-gradient(180deg, transparent, rgba(10, 66, 38, 0.35));
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 55%);
+  mask-image: linear-gradient(180deg, transparent, #000 55%);
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  opacity: 0.16;
+  box-shadow:
+    8vw 22vh 0 0 rgba(255,255,255,0.5), 16vw 64vh 0 0 rgba(255,255,255,0.35),
+    24vw 38vh 0 0 rgba(255,255,255,0.4), 33vw 80vh 0 0 rgba(255,255,255,0.3),
+    41vw 14vh 0 0 rgba(255,255,255,0.45), 52vw 56vh 0 0 rgba(255,255,255,0.3),
+    61vw 30vh 0 0 rgba(255,255,255,0.5), 70vw 74vh 0 0 rgba(255,255,255,0.32),
+    78vw 20vh 0 0 rgba(255,255,255,0.4), 86vw 48vh 0 0 rgba(255,255,255,0.36),
+    93vw 70vh 0 0 rgba(255,255,255,0.42), 12vw 88vh 0 0 rgba(255,255,255,0.3),
+    47vw 90vh 0 0 rgba(255,255,255,0.34), 66vw 8vh 0 0 rgba(255,255,255,0.4);
+  animation: dustDrift 34s ease-in-out infinite alternate;
+}
+@keyframes dustDrift {
+  from { transform: translateY(0); }
+  to { transform: translateY(-46px); }
+}
+
+/* ============================================================
+   GRAPHICS PASS — richer rings, specular lines, button glow
+   ============================================================ */
+.portrait-ring {
+  box-shadow:
+    0 10px 22px rgba(2, 6, 20, 0.65),
+    0 0 0 3px #f4f8ff,
+    0 0 0 4.5px rgba(202, 162, 63, 0.85),
+    0 0 0 7px rgba(11, 28, 58, 0.9),
+    0 0 18px rgba(143, 184, 238, 0.22);
+}
+.glossy::after, .glossy-deep::after {
+  content: "";
+  position: absolute;
+  left: 6%; right: 6%; top: 0;
+  height: 1px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  pointer-events: none;
+}
+.btn-game:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 0 var(--shadow-bottom, #0a5c30), 0 12px 26px rgba(2, 6, 20, 0.55), 0 0 20px rgba(255, 210, 87, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+.plate {
+  background:
+    radial-gradient(120% 90% at 50% -20%, rgba(255, 255, 255, 0.14), transparent 55%),
+    linear-gradient(180deg, #16407f, #0c2a57);
+}
+
+/* formation-style stagger for the guess-mode lineup */
+.lineup > div:nth-child(even) { margin-top: 16px; }
+@media (max-width: 640px) {
+  .lineup > div:nth-child(even) { margin-top: 10px; }
+}

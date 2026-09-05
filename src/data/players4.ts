@@ -1,0 +1,111 @@
+// Name|countryId|clubIds(comma)|tier|era|position
+// ITALIAN SCHOOL — every generation, from Grande Torino to the Azzurri of
+// today (the database previously had no Italians at all, spec #19/#45).
+// Plus a handful of missing world-famous icons (Pires, Y. Touré, Altafini).
+export const RAW_PLAYERS_4 = `
+Gianluigi Buffon|italy|parma,juventus,psg|1|modern|GK
+Paolo Maldini|italy|milan|1|modern|DF
+Roberto Baggio|italy|fiorentina,juventus,milan,bologna,inter,brescia|1|classic|FW
+Francesco Totti|italy|roma|1|modern|FW
+Alessandro Del Piero|italy|juventus|1|modern|FW
+Andrea Pirlo|italy|brescia,inter,milan,juventus|1|modern|MF
+Fabio Cannavaro|italy|napoli,parma,inter,juventus,real-madrid|1|modern|DF
+Alessandro Nesta|italy|lazio,milan|2|modern|DF
+Gennaro Gattuso|italy|salernitana,milan|2|modern|MF
+Franco Baresi|italy|milan|2|legend|DF
+Christian Vieri|italy|torino,atletico,lazio,inter,milan,fiorentina|2|modern|FW
+Filippo Inzaghi|italy|parma,juventus,milan|2|modern|FW
+Dino Zoff|italy|udinese,napoli,juventus|2|classic|GK
+Luigi Riva|italy|cagliari|2|legend|FW
+Gianfranco Zola|italy|napoli,parma,chelsea,cagliari|2|classic|FW
+Gianluca Vialli|italy|sampdoria,juventus,chelsea|2|classic|FW
+Giacinto Facchetti|italy|inter|2|legend|DF
+Paolo Rossi|italy|vicenza,perugia,juventus,milan|2|classic|FW
+Carlo Ancelotti|italy|roma,milan|2|legend|MF
+Jorginho|italy|napoli,chelsea,arsenal,flamengo|2|modern|MF
+Gianluigi Donnarumma|italy|milan,psg|2|modern|GK
+Marco Verratti|italy|psg|2|modern|MF
+Federico Chiesa|italy|fiorentina,juventus,liverpool|2|modern|FW
+Nicolò Barella|italy|cagliari,inter|2|modern|MF
+Giorgio Chiellini|italy|fiorentina,juventus|2|modern|DF
+Leonardo Bonucci|italy|bari,juventus,milan|2|modern|DF
+Daniele De Rossi|italy|roma,boca|2|modern|MF
+Sandro Mazzola|italy|inter|3|legend|FW
+Gianni Rivera|italy|milan|3|legend|MF
+Giuseppe Bergomi|italy|inter|3|legend|DF
+Gaetano Scirea|italy|juventus|3|legend|DF
+Marco Tardelli|italy|juventus,inter|3|legend|MF
+Roberto Donadoni|italy|milan|3|classic|MF
+Salvatore Schillaci|italy|juventus,inter|3|classic|FW
+Antonio Conte|italy|juventus,lecce|3|modern|MF
+Ciro Immobile|italy|juventus,genoa,torino,dortmund,sevilla,lazio,besiktas|3|modern|FW
+Lorenzo Insigne|italy|napoli|3|modern|FW
+Antonio Di Natale|italy|empoli,udinese|3|modern|FW
+Manuel Locatelli|italy|milan,sassuolo,juventus|3|modern|MF
+Sandro Tonali|italy|brescia,milan,newcastle|3|modern|MF
+Antonio Cassano|italy|bari,roma,real-madrid,sampdoria,milan,inter,parma|3|modern|FW
+Alberto Gilardino|italy|parma,milan,fiorentina,genoa|3|modern|FW
+Vincenzo Montella|italy|genoa,sampdoria,roma,fulham|3|modern|FW
+Enrico Chiesa|italy|sampdoria,parma,fiorentina,lazio|3|modern|FW
+Angelo Peruzzi|italy|roma,juventus,inter,lazio|3|modern|GK
+Francesco Toldo|italy|fiorentina,inter|3|modern|GK
+Demetrio Albertini|italy|milan,atletico,lazio,barcelona|3|modern|MF
+Mauro Camoranesi|italy|juventus|3|modern|MF
+Fabio Grosso|italy|palermo,inter,juventus,lyon|3|modern|DF
+Gianluca Zambrotta|italy|bari,juventus,milan|3|modern|DF
+Lorenzo Pellegrini|italy|roma,sassuolo|3|modern|MF
+Giovanni Di Lorenzo|italy|napoli,empoli|3|modern|DF
+Alessandro Bastoni|italy|atalanta,parma,inter|3|modern|DF
+Emerson Palmieri|italy|roma,chelsea,lyon,west-ham|3|modern|DF
+Mario Balotelli|italy|inter,man-city,milan,liverpool,brescia|3|modern|FW
+Luca Toni|italy|palermo,fiorentina,bayern,roma,juventus|3|modern|FW
+Giovanni Trapattoni|italy|milan|3|legend|MF
+Valentino Mazzola|italy|torino|4|legend|FW
+Silvio Piola|italy|lazio,torino,juventus|4|legend|FW
+Ezio Loik|italy|torino|5|legend|MF
+Romeo Menti|italy|torino,fiorentina|5|legend|FW
+Virgilio Maroso|italy|torino|5|legend|DF
+Guglielmo Gabetto|italy|juventus,torino|5|legend|FW
+Fabrizio Ravanelli|italy|juventus,middlesbrough,marseille,lazio|4|classic|FW
+Pierluigi Casiraghi|italy|juventus,lazio,chelsea|4|classic|FW
+Attilio Lombardo|italy|sampdoria,juventus,lazio,crystal-palace|5|classic|FW
+Moreno Torricelli|italy|juventus,fiorentina|5|classic|DF
+Alessio Tacchinardi|italy|juventus,villarreal|5|modern|MF
+Franco Causio|italy|juventus,udinese,inter,lecce|5|legend|FW
+Romeo Benetti|italy|milan,roma,juventus|5|legend|MF
+Pietro Vierchowod|italy|sampdoria,juventus,milan|4|classic|DF
+Claudio Gentile|italy|juventus,fiorentina|4|legend|DF
+Antonio Cabrini|italy|juventus|4|classic|DF
+Beppe Signori|italy|foggia,lazio,sampdoria,bologna|4|classic|FW
+Giuseppe Giannini|italy|roma|4|classic|MF
+Ciro Ferrara|italy|napoli,juventus|4|classic|DF
+Simone Perrotta|italy|juventus,chievo,roma|4|modern|MF
+Vincenzo Iaquinta|italy|udinese,juventus|4|modern|FW
+Fabio Quagliarella|italy|sampdoria,udinese,napoli,juventus,torino|4|modern|FW
+Sebastian Giovinco|italy|juventus,parma,empoli|4|modern|FW
+Alessandro Florenzi|italy|roma,valencia,psg,milan|4|modern|DF
+Matteo Darmian|italy|milan,palermo,torino,man-united,parma,inter|4|modern|DF
+Giacomo Bonaventura|italy|atalanta,milan,fiorentina|4|modern|MF
+Francesco Acerbi|italy|chievo,genoa,sassuolo,lazio,inter|4|modern|DF
+Leonardo Spinazzola|italy|juventus,atalanta,roma,napoli|4|modern|DF
+Domenico Berardi|italy|sassuolo|4|modern|FW
+Gianluca Scamacca|italy|sassuolo,west-ham,atalanta|4|modern|FW
+Mateo Retegui|italy|boca,genoa,atalanta|4|modern|FW
+Federico Dimarco|italy|inter,parma,empoli|4|modern|DF
+Davide Frattesi|italy|sassuolo,inter|4|modern|MF
+Mattia Perin|italy|genoa,juventus|4|modern|GK
+Salvatore Sirigu|italy|palermo,psg,torino,napoli|4|modern|GK
+Guglielmo Vicario|italy|empoli,cagliari,tottenham|4|modern|GK
+Riccardo Calafiori|italy|roma,arsenal|4|modern|DF
+Matteo Politano|italy|sassuolo,inter,napoli|5|modern|FW
+Matteo Pessina|italy|atalanta,monza|5|modern|MF
+Giacomo Raspadori|italy|sassuolo,napoli,atletico|5|modern|FW
+Wilfried Gnonto|italy|leeds|5|modern|FW
+Bryan Cristante|italy|milan,atalanta,roma|5|modern|MF
+Nicolò Fagioli|italy|juventus,fiorentina|5|modern|MF
+Roberto Mancini|italy|bologna,sampdoria,lazio,leicester|3|legend|FW
+José Altafini|brazil|palmeiras,milan,napoli,juventus|3|legend|FW
+Robert Pires|france|metz,marseille,arsenal,villarreal|2|classic|MF
+Didier Deschamps|france|nantes,marseille,bordeaux,juventus,chelsea,valencia|3|classic|MF
+Yaya Touré|ivory-coast|olympiacos,monaco,barcelona,man-city|2|modern|MF
+`;
