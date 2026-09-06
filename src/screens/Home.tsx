@@ -37,9 +37,9 @@ export function KarenAvatar({ size = 150 }: { size?: number }) {
           <stop offset="100%" stopColor="#c9895c" />
         </radialGradient>
         <linearGradient id={hairG} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#2b2735" />
-          <stop offset="45%" stopColor="#16131c" />
-          <stop offset="100%" stopColor="#0c0a10" />
+          <stop offset="0%" stopColor="#3d3654" />
+          <stop offset="45%" stopColor="#1d1928" />
+          <stop offset="100%" stopColor="#100d16" />
         </linearGradient>
         <linearGradient id={jackG} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#3a4a68" />
@@ -90,15 +90,18 @@ export function KarenAvatar({ size = 150 }: { size?: number }) {
         <ellipse cx="80" cy="162" rx="24" ry="30" fill="#ffffff" opacity="0.05" transform="rotate(-16 80 162)" />
         <path d="M142 134 C156 142 166 156 170 176" stroke="rgba(255,255,255,0.20)" strokeWidth="4" fill="none" strokeLinecap="round" />
 
-        {/* ===== long back hair — flows over the shoulders ===== */}
+        {/* ===== long back hair — wide silhouette, flows well past the shoulders ===== */}
         <path
-          d="M62 50 C56 22 82 10 100 10 C118 10 144 22 138 50 C144 78 144 108 137 134 C133 150 136 160 129 168 C121 176 113 171 116 158 C120 140 121 112 117 86 L83 86 C79 112 80 140 84 158 C87 171 79 176 71 168 C64 160 67 150 63 134 C56 108 56 78 62 50 Z"
+          d="M60 52 C52 20 80 8 100 8 C120 8 148 20 140 52 C148 82 148 114 140 140 C136 156 140 166 131 174 C122 181 114 175 117 162 C121 142 122 112 117 86 L83 86 C78 112 79 142 83 162 C86 175 78 181 69 174 C60 166 64 156 60 140 C52 114 52 82 60 52 Z"
           fill={`url(#${hairG})`} stroke={dark} strokeWidth="2.5"
         />
-        <path d="M69 62 C65 92 65 122 70 150" stroke="#4d5468" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.5" />
-        <path d="M131 62 C135 92 135 122 130 150" stroke="#4d5468" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.5" />
-        <path d="M76 55 C73 85 73 118 78 154" stroke="#0c0a10" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.6" />
-        <path d="M124 55 C127 85 127 118 122 154" stroke="#0c0a10" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.6" />
+        {/* bright sheen strands running down the long columns — length reads clearly */}
+        <path d="M69 62 C65 92 65 122 70 150" stroke="#6d7591" strokeWidth="2.2" fill="none" strokeLinecap="round" opacity="0.55" />
+        <path d="M131 62 C135 92 135 122 130 150" stroke="#6d7591" strokeWidth="2.2" fill="none" strokeLinecap="round" opacity="0.55" />
+        <path d="M74 96 C72 120 73 142 77 160" stroke="#59617d" strokeWidth="1.8" fill="none" strokeLinecap="round" opacity="0.5" />
+        <path d="M126 96 C128 120 127 142 123 160" stroke="#59617d" strokeWidth="1.8" fill="none" strokeLinecap="round" opacity="0.5" />
+        <path d="M76 55 C73 85 73 118 78 154" stroke="#100d16" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.6" />
+        <path d="M124 55 C127 85 127 118 122 154" stroke="#100d16" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.6" />
 
         {/* ===== slim teenage neck ===== */}
         <path d="M91 96 L91 128 C91 135 109 135 109 128 L109 96 Z" fill="#edbd93" stroke={dark} strokeWidth="2.5" />
@@ -160,10 +163,13 @@ export function KarenAvatar({ size = 150 }: { size?: number }) {
           d="M63 62 C58 26 84 11 101 12 C120 13 142 27 138 62 C136 52 131 45 124 42 C126 48 126 54 124 58 C118 46 108 41 99 42 C102 47 103 52 102 57 C95 46 84 43 76 47 C78 52 78 57 76 61 C71 56 66 58 63 62 Z"
           fill={`url(#${hairG})`} stroke={dark} strokeWidth="2.5"
         />
-        {/* long left lock down to the jaw */}
-        <path d="M63 58 C58 78 60 100 68 116 C70 122 76 122 76 115 C72 98 72 80 76 64 C71 58 66 56 63 58 Z" fill={`url(#${hairG})`} stroke={dark} strokeWidth="2.2" />
-        {/* long right lock down to the jaw */}
-        <path d="M137 58 C142 78 140 100 132 116 C130 122 124 122 124 115 C128 98 128 80 124 64 C129 58 134 56 137 58 Z" fill={`url(#${hairG})`} stroke={dark} strokeWidth="2.2" />
+        {/* long left lock — past the jaw, down to the collarbone */}
+        <path d="M62 58 C54 84 56 112 64 134 C67 146 79 146 78 133 C71 111 71 86 76 64 C71 57 65 55 62 58 Z" fill={`url(#${hairG})`} stroke={dark} strokeWidth="2.2" />
+        {/* long right lock — past the jaw, down to the collarbone */}
+        <path d="M138 58 C146 84 144 112 136 134 C133 146 121 146 122 133 C129 111 129 86 124 64 C129 57 135 55 138 58 Z" fill={`url(#${hairG})`} stroke={dark} strokeWidth="2.2" />
+        {/* sheen on the face-framing locks */}
+        <path d="M66 70 C62 92 63 114 69 130" stroke="#6d7591" strokeWidth="1.7" fill="none" strokeLinecap="round" opacity="0.5" />
+        <path d="M134 70 C138 92 137 114 131 130" stroke="#6d7591" strokeWidth="1.7" fill="none" strokeLinecap="round" opacity="0.5" />
         {/* stray strand on the forehead */}
         <path d="M101 42 C99 50 99 56 101 63 C103 56 103 49 104 43 Z" fill="#14111a" />
         {/* blue-black sheen strands */}

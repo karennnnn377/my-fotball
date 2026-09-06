@@ -38,12 +38,7 @@ export interface PortraitLook {
   young?: boolean;    // teenage proportions: rounder face, bigger eyes, slimmer build
 }
 
-/** Signature looks pinned by player id — guarantees a named character
-    renders identically on every screen, even if the caller forgets to
-    pass the `look` prop. Caller props still take precedence. */
-const SIGNATURE_LOOKS: Record<string, PortraitLook> = {
-  "karen-signature-26": { skin: "#e8b487", hair: "#161311", hairStyle: 2, beard: 0, collar: 2, band: false, young: true },
-};
+
 
 interface PortraitProps {
   player: Player;
@@ -62,8 +57,8 @@ export default function Portrait({ player, color, color2, size = 92, showName = 
   const uid = useId().replace(/:/g, "");
   const h = hash(player.id);
 
-  // signature look (by id) + explicit caller look — caller wins on conflicts
-  const L: PortraitLook = { ...SIGNATURE_LOOKS[player.id], ...look };
+  // explicit caller look overrides the id-hash roll
+  const L: PortraitLook = { ...look };
 
   const skin = L.skin ?? SKIN[h % SKIN.length];
   const skinHi = tint(skin, 0.38);
