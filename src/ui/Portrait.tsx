@@ -38,6 +38,13 @@ export interface PortraitLook {
   young?: boolean;    // teenage proportions: rounder face, bigger eyes, slimmer build
 }
 
+/** Signature looks pinned by player id — guarantees a named character
+    renders identically on every screen, even if the caller forgets to
+    pass the `look` prop. Caller props still take precedence. */
+const SIGNATURE_LOOKS: Record<string, PortraitLook> = {
+  "karen-signature-26": { skin: "#e8b487", hair: "#161311", hairStyle: 2, beard: 0, collar: 2, band: false, young: true },
+};
+
 interface PortraitProps {
   player: Player;
   color: string;      // team primary colour — jersey base
@@ -55,16 +62,19 @@ export default function Portrait({ player, color, color2, size = 92, showName = 
   const uid = useId().replace(/:/g, "");
   const h = hash(player.id);
 
-  const skin = look?.skin ?? SKIN[h % SKIN.length];
+  // signature look (by id) + explicit caller look — caller wins on conflicts
+  const L: PortraitLook = { ...SIGNATURE_LOOKS[player.id], ...look };
+
+  const skin = L.skin ?? SKIN[h % SKIN.length];
   const skinHi = tint(skin, 0.38);
   const skinLo = shade(skin, 0.30);
-  const hairC = look?.hair ?? HAIR[(h >> 2) % HAIR.length];
+  const hairC = L.hair ?? HAIR[(h >> 2) % HAIR.length];
   const hairHi = tint(hairC, 0.42);
   const eyeC = EYES[(h >> 5) % EYES.length];
-  const hairStyle = look?.hairStyle ?? (h >> 4) % 8;
-  const beard = look?.beard ?? (h >> 7) % 4;
-  const collar = look?.collar ?? (h >> 9) % 3;
-  const band = look?.band ?? (h >> 11) % 7 === 0;
+  const hairStyle = L.hairStyle ?? (h >> 4) % 8;
+  const beard = L.beard ?? (h >> 7) % 4;
+  const collar = L.collar ?? (h >> 9) % 3;
+  const band = L.band ?? (h >> 11) % 7 === 0;
 
   const jersey = color;
   const jerseyHi = tint(jersey, 0.32);
@@ -82,7 +92,7 @@ export default function Portrait({ player, color, color2, size = 92, showName = 
   const qId = `pq-${uid}`;
 
   const dark = "#0b1c3a";
-  const young = look?.young ?? false;
+  const young = L.young ?? false;
   // adult: strong jaw & broad shoulders — young: rounder face, slimmer build
   const HEAD = young
     ? "M100 25 C122 25 136 43 136 65 C136 81 132 93 124 102 C117 110 109 114 100 114 C91 114 83 110 76 102 C68 93 64 81 64 65 C64 43 78 25 100 25 Z"
@@ -305,7 +315,11 @@ export default function Portrait({ player, color, color2, size = 92, showName = 
               {hairStyle === 2 && (
                 <g>
                   <path d="M66 60 C64 32 100 24 120 32 C134 38 136 50 134 60 C130 42 118 36 104 38 C84 40 70 48 66 60 Z" fill={hairC} stroke={dark} strokeWidth="2.5" />
+                  {/* styled quiff: front lock swept up + strand texture */}
+                  <path d="M96 30 C100 22 112 20 120 26 C114 26 106 28 102 34 Z" fill={hairC} stroke={dark} strokeWidth="2" />
                   <path d="M84 36 C96 32 112 34 122 42" stroke={hairHi} strokeWidth="2.4" fill="none" strokeLinecap="round" opacity="0.7" />
+                  <path d="M72 47 C82 38 100 34 114 38" stroke={shade(hairC, 0.3)} strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.5" />
+                  <path d="M100 26 C106 24 113 24 118 27" stroke={hairHi} strokeWidth="1.8" fill="none" strokeLinecap="round" opacity="0.6" />
                 </g>
               )}
               {hairStyle === 3 && (
@@ -371,18 +385,21 @@ export default function Portrait({ player, color, color2, size = 92, showName = 
               {young ? (
                 /* bigger, rounder teenage eyes */
                 <g>
-                  <ellipse cx="84.5" cy="71" rx="8.6" ry="6.4" fill="#fdfdfd" stroke={dark} strokeWidth="1.4" />
-                  <ellipse cx="115.5" cy="71" rx="8.6" ry="6.4" fill="#fdfdfd" stroke={dark} strokeWidth="1.4" />
-                  <circle cx="84.5" cy="71.2" r="4.4" fill={`url(#${irisId})`} stroke={shade(eyeC, 0.6)} strokeWidth="0.8" />
-                  <circle cx="115.5" cy="71.2" r="4.4" fill={`url(#${irisId})`} stroke={shade(eyeC, 0.6)} strokeWidth="0.8" />
-                  <circle cx="84.5" cy="71.2" r="2.1" fill="#0a0f18" />
-                  <circle cx="115.5" cy="71.2" r="2.1" fill="#0a0f18" />
+                  <ellipse cx="84.5" cy="71" rx="9.3" ry="6.9" fill="#fdfdfd" stroke={dark} strokeWidth="1.4" />
+                  <ellipse cx="115.5" cy="71" rx="9.3" ry="6.9" fill="#fdfdfd" stroke={dark} strokeWidth="1.4" />
+                  <circle cx="84.5" cy="71.2" r="4.9" fill={`url(#${irisId})`} stroke={shade(eyeC, 0.6)} strokeWidth="0.8" />
+                  <circle cx="115.5" cy="71.2" r="4.9" fill={`url(#${irisId})`} stroke={shade(eyeC, 0.6)} strokeWidth="0.8" />
+                  <circle cx="84.5" cy="71.2" r="2.4" fill="#0a0f18" />
+                  <circle cx="115.5" cy="71.2" r="2.4" fill="#0a0f18" />
                   <circle cx="86" cy="69.6" r="1.25" fill="#ffffff" />
                   <circle cx="117" cy="69.6" r="1.25" fill="#ffffff" />
                   <circle cx="83.2" cy="72.8" r="0.6" fill="#ffffff" opacity="0.8" />
                   <circle cx="114.2" cy="72.8" r="0.6" fill="#ffffff" opacity="0.8" />
                   <path d="M76.4 69.4 C80 64.9 89 64.7 92.6 69" fill="none" stroke={dark} strokeWidth="1.7" strokeLinecap="round" />
                   <path d="M107.4 69 C111 64.7 120 64.9 123.6 69.4" fill="none" stroke={dark} strokeWidth="1.7" strokeLinecap="round" />
+                  {/* tiny lash flicks */}
+                  <path d="M75.8 68.8 L73 67.4" stroke={dark} strokeWidth="1.4" strokeLinecap="round" />
+                  <path d="M124.2 68.8 L127 67.4" stroke={dark} strokeWidth="1.4" strokeLinecap="round" />
                   <path d="M78.5 75.6 C82.5 77.3 87.5 77.3 90.8 75.4" fill="none" stroke={tint(skin, 0.3)} strokeWidth="1.2" opacity="0.8" />
                   <path d="M109.2 75.4 C112.5 77.3 117.5 77.3 121.5 75.6" fill="none" stroke={tint(skin, 0.3)} strokeWidth="1.2" opacity="0.8" />
                 </g>
@@ -425,7 +442,7 @@ export default function Portrait({ player, color, color2, size = 92, showName = 
               )}
 
               {/* ===== mouth ===== */}
-              <path d={young ? "M89.5 92.5 C95 97.8 105 97.8 110.5 92.5" : "M90 94 C95 98.6 105 98.6 110 94"} fill="none" stroke={dark} strokeWidth="2.6" strokeLinecap="round" />
+              <path d={young ? "M88.5 92 C95 99.2 105 99.2 111.5 92" : "M90 94 C95 98.6 105 98.6 110 94"} fill="none" stroke={dark} strokeWidth="2.6" strokeLinecap="round" />
               <path d={young ? "M92 90.9 C96 89.8 104 89.8 108 90.9" : "M92 92.4 C96 91.2 104 91.2 108 92.4"} fill="none" stroke={shade(skin, 0.35)} strokeWidth="1.4" opacity="0.6" />
               <path d={young ? "M93 98.6 C97 100.9 103 100.9 107 98.6" : "M93.5 99.6 C97.5 101.8 102.5 101.8 106.5 99.6"} fill="none" stroke={tint(skin, 0.32)} strokeWidth="2.2" strokeLinecap="round" opacity="0.85" />
               {/* chin crease (adults only) */}
