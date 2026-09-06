@@ -35,6 +35,7 @@ export interface PortraitLook {
   beard?: number;     // 0 none, 1 stubble, 2 goatee, 3 full
   collar?: number;    // 0 v-neck, 1 crew, 2 polo
   band?: boolean;     // headband
+  young?: boolean;    // teenage proportions: rounder face, bigger eyes, slimmer build
 }
 
 interface PortraitProps {
@@ -81,8 +82,14 @@ export default function Portrait({ player, color, color2, size = 92, showName = 
   const qId = `pq-${uid}`;
 
   const dark = "#0b1c3a";
-  const HEAD = "M100 24 C121 24 135 41 136 62 C136.5 76 133 89 125 99 C118 108 110 115 100 115 C90 115 82 108 75 99 C67 89 63.5 76 64 62 C65 41 79 24 100 24 Z";
-  const BODY = "M20 200 C24 150 52 128 78 122 L100 132 L122 122 C148 128 176 150 180 200 Z";
+  const young = look?.young ?? false;
+  // adult: strong jaw & broad shoulders — young: rounder face, slimmer build
+  const HEAD = young
+    ? "M100 25 C122 25 136 43 136 65 C136 81 132 93 124 102 C117 110 109 114 100 114 C91 114 83 110 76 102 C68 93 64 81 64 65 C64 43 78 25 100 25 Z"
+    : "M100 24 C121 24 135 41 136 62 C136.5 76 133 89 125 99 C118 108 110 115 100 115 C90 115 82 108 75 99 C67 89 63.5 76 64 62 C65 41 79 24 100 24 Z";
+  const BODY = young
+    ? "M30 200 C34 156 58 135 80 128 L100 136 L120 128 C142 135 166 156 170 200 Z"
+    : "M20 200 C24 150 52 128 78 122 L100 132 L122 122 C148 128 176 150 180 200 Z";
 
   return (
     <div className="flex flex-col items-center gap-1" style={{ width: size + 8 }}>
@@ -177,14 +184,34 @@ export default function Portrait({ player, color, color2, size = 92, showName = 
               {/* ===== torso / jersey ===== */}
               <path d={BODY} fill={`url(#${jerseyId})`} stroke={dark} strokeWidth="3" />
               {/* side shading */}
-              <path d="M20 200 C24 158 44 136 62 128 L58 200 Z" fill="#000000" opacity="0.20" />
-              <path d="M180 200 C176 158 156 136 138 128 L142 200 Z" fill="#000000" opacity="0.20" />
+              {young ? (
+                <>
+                  <path d="M30 200 C34 162 50 143 66 134 L62 200 Z" fill="#000000" opacity="0.20" />
+                  <path d="M170 200 C166 162 150 143 134 134 L138 200 Z" fill="#000000" opacity="0.20" />
+                </>
+              ) : (
+                <>
+                  <path d="M20 200 C24 158 44 136 62 128 L58 200 Z" fill="#000000" opacity="0.20" />
+                  <path d="M180 200 C176 158 156 136 138 128 L142 200 Z" fill="#000000" opacity="0.20" />
+                </>
+              )}
               {/* shoulder trim stripes (team secondary colour) */}
               <g fill={trim} stroke={trimLo} strokeWidth="1">
-                <path d="M47 139 L71 127 L75 134 L51 146 Z" />
-                <path d="M39 148 L63 136 L67 143 L43 155 Z" />
-                <path d="M153 139 L129 127 L125 134 L149 146 Z" />
-                <path d="M161 148 L137 136 L133 143 L157 155 Z" />
+                {young ? (
+                  <>
+                    <path d="M55 145 L77 134 L81 141 L59 152 Z" />
+                    <path d="M47 154 L69 143 L73 150 L51 161 Z" />
+                    <path d="M145 145 L123 134 L119 141 L141 152 Z" />
+                    <path d="M153 154 L131 143 L127 150 L149 161 Z" />
+                  </>
+                ) : (
+                  <>
+                    <path d="M47 139 L71 127 L75 134 L51 146 Z" />
+                    <path d="M39 148 L63 136 L67 143 L43 155 Z" />
+                    <path d="M153 139 L129 127 L125 134 L149 146 Z" />
+                    <path d="M161 148 L137 136 L133 143 L157 155 Z" />
+                  </>
+                )}
               </g>
               {/* fabric folds */}
               <g fill="none" stroke="#000000" strokeWidth="2.4" opacity="0.13" strokeLinecap="round">
@@ -193,11 +220,12 @@ export default function Portrait({ player, color, color2, size = 92, showName = 
                 <path d="M100 152 C99 168 100 184 100 199" />
               </g>
               {/* chest sheen */}
-              <ellipse cx="78" cy="152" rx="26" ry="34" fill="#ffffff" opacity="0.06" transform="rotate(-18 78 152)" />
+              <ellipse cx="80" cy="155" rx="24" ry="32" fill="#ffffff" opacity="0.06" transform="rotate(-18 80 155)" />
               {/* rim light on right shoulder */}
-              <path d="M146 132 C162 140 172 156 176 176" stroke="rgba(255,255,255,0.22)" strokeWidth="4" fill="none" strokeLinecap="round" />
+              <path d={young ? "M138 136 C152 144 162 158 166 178" : "M146 132 C162 140 172 156 176 176"} stroke="rgba(255,255,255,0.22)" strokeWidth="4" fill="none" strokeLinecap="round" />
 
               {/* collar */}
+              <g transform={young ? "translate(0 4)" : undefined}>
               {collar === 0 && (
                 <g>
                   <path d="M82 122 L100 146 L118 122 L112 118 L100 132 L88 118 Z" fill={skin} stroke={dark} strokeWidth="2.5" />
@@ -218,10 +246,20 @@ export default function Portrait({ player, color, color2, size = 92, showName = 
                   <circle cx="100" cy="148" r="1.6" fill={trim} />
                 </g>
               )}
+              </g>
 
               {/* ===== neck ===== */}
-              <path d="M88 96 L88 128 C88 136 112 136 112 128 L112 96 Z" fill={skin} stroke={dark} strokeWidth="2.5" />
-              <path d="M88 104 C94 114 106 114 112 104 L112 122 C106 129 94 129 88 122 Z" fill="#000000" opacity="0.20" />
+              {young ? (
+                <>
+                  <path d="M91 97 L91 129 C91 136 109 136 109 129 L109 97 Z" fill={skin} stroke={dark} strokeWidth="2.5" />
+                  <path d="M91 105 C96 113 104 113 109 105 L109 123 C104 129 96 129 91 123 Z" fill="#000000" opacity="0.20" />
+                </>
+              ) : (
+                <>
+                  <path d="M88 96 L88 128 C88 136 112 136 112 128 L112 96 Z" fill={skin} stroke={dark} strokeWidth="2.5" />
+                  <path d="M88 104 C94 114 106 114 112 104 L112 122 C106 129 94 129 88 122 Z" fill="#000000" opacity="0.20" />
+                </>
+              )}
 
               {/* ===== ears ===== */}
               <ellipse cx="64.5" cy="71" rx="6.5" ry="10" fill={skin} stroke={dark} strokeWidth="2.5" />
@@ -238,8 +276,17 @@ export default function Portrait({ player, color, color2, size = 92, showName = 
               {/* cheek highlight */}
               <ellipse cx="80" cy="82" rx="9" ry="12" fill="#ffffff" opacity="0.08" transform="rotate(10 80 82)" />
               {/* brow-ridge soft shadow */}
-              <ellipse cx="84" cy="62" rx="11" ry="3.4" fill="#000000" opacity="0.08" />
-              <ellipse cx="116" cy="62" rx="11" ry="3.4" fill="#000000" opacity="0.08" />
+              {young ? (
+                <>
+                  <ellipse cx="84" cy="63" rx="9" ry="2.6" fill="#000000" opacity="0.06" />
+                  <ellipse cx="116" cy="63" rx="9" ry="2.6" fill="#000000" opacity="0.06" />
+                </>
+              ) : (
+                <>
+                  <ellipse cx="84" cy="62" rx="11" ry="3.4" fill="#000000" opacity="0.08" />
+                  <ellipse cx="116" cy="62" rx="11" ry="3.4" fill="#000000" opacity="0.08" />
+                </>
+              )}
 
               {/* ===== hair ===== */}
               {hairStyle === 0 && (
@@ -308,10 +355,38 @@ export default function Portrait({ player, color, color2, size = 92, showName = 
               )}
 
               {/* ===== eyebrows ===== */}
-              <path d="M74 58.5 C79 55 88 54.8 92.5 57.5 C88 57 79.5 57.2 74 58.5 Z" fill={shade(hairC, 0.15)} transform="rotate(-4 83 57)" />
-              <path d="M107.5 57.5 C112 54.8 121 55 126 58.5 C120.5 57.2 112 57 107.5 57.5 Z" fill={shade(hairC, 0.15)} transform="rotate(4 117 57)" />
+              {young ? (
+                <>
+                  <path d="M76 61 C80.5 58.4 88.5 58.2 92 60.4 C88 60 81 60.2 76 61 Z" fill={shade(hairC, 0.15)} transform="rotate(-3 84 60)" />
+                  <path d="M108 60.4 C111.5 58.2 119.5 58.4 124 61 C119 60.2 112 60 108 60.4 Z" fill={shade(hairC, 0.15)} transform="rotate(3 116 60)" />
+                </>
+              ) : (
+                <>
+                  <path d="M74 58.5 C79 55 88 54.8 92.5 57.5 C88 57 79.5 57.2 74 58.5 Z" fill={shade(hairC, 0.15)} transform="rotate(-4 83 57)" />
+                  <path d="M107.5 57.5 C112 54.8 121 55 126 58.5 C120.5 57.2 112 57 107.5 57.5 Z" fill={shade(hairC, 0.15)} transform="rotate(4 117 57)" />
+                </>
+              )}
 
               {/* ===== eyes ===== */}
+              {young ? (
+                /* bigger, rounder teenage eyes */
+                <g>
+                  <ellipse cx="84.5" cy="71" rx="8.6" ry="6.4" fill="#fdfdfd" stroke={dark} strokeWidth="1.4" />
+                  <ellipse cx="115.5" cy="71" rx="8.6" ry="6.4" fill="#fdfdfd" stroke={dark} strokeWidth="1.4" />
+                  <circle cx="84.5" cy="71.2" r="4.4" fill={`url(#${irisId})`} stroke={shade(eyeC, 0.6)} strokeWidth="0.8" />
+                  <circle cx="115.5" cy="71.2" r="4.4" fill={`url(#${irisId})`} stroke={shade(eyeC, 0.6)} strokeWidth="0.8" />
+                  <circle cx="84.5" cy="71.2" r="2.1" fill="#0a0f18" />
+                  <circle cx="115.5" cy="71.2" r="2.1" fill="#0a0f18" />
+                  <circle cx="86" cy="69.6" r="1.25" fill="#ffffff" />
+                  <circle cx="117" cy="69.6" r="1.25" fill="#ffffff" />
+                  <circle cx="83.2" cy="72.8" r="0.6" fill="#ffffff" opacity="0.8" />
+                  <circle cx="114.2" cy="72.8" r="0.6" fill="#ffffff" opacity="0.8" />
+                  <path d="M76.4 69.4 C80 64.9 89 64.7 92.6 69" fill="none" stroke={dark} strokeWidth="1.7" strokeLinecap="round" />
+                  <path d="M107.4 69 C111 64.7 120 64.9 123.6 69.4" fill="none" stroke={dark} strokeWidth="1.7" strokeLinecap="round" />
+                  <path d="M78.5 75.6 C82.5 77.3 87.5 77.3 90.8 75.4" fill="none" stroke={tint(skin, 0.3)} strokeWidth="1.2" opacity="0.8" />
+                  <path d="M109.2 75.4 C112.5 77.3 117.5 77.3 121.5 75.6" fill="none" stroke={tint(skin, 0.3)} strokeWidth="1.2" opacity="0.8" />
+                </g>
+              ) : (
               <g>
                 <path d="M76.5 69.5 C79.5 64.8 89 64.2 92 68.8 C89 73.4 79.8 73.8 76.5 69.5 Z" fill="#fdfdfd" stroke={dark} strokeWidth="1.4" />
                 <path d="M108 68.8 C111 64.2 120.5 64.8 123.5 69.5 C120.2 73.8 111 73.4 108 68.8 Z" fill="#fdfdfd" stroke={dark} strokeWidth="1.4" />
@@ -329,19 +404,46 @@ export default function Portrait({ player, color, color2, size = 92, showName = 
                 <path d="M79 72.6 C83 74 88 74 91 72.4" fill="none" stroke={tint(skin, 0.3)} strokeWidth="1.2" opacity="0.8" />
                 <path d="M109 72.4 C112 74 117 74 121 72.6" fill="none" stroke={tint(skin, 0.3)} strokeWidth="1.2" opacity="0.8" />
               </g>
+              )}
 
               {/* ===== nose ===== */}
-              <path d="M100.5 70 C100 76 98.6 80.5 96.6 83.6" fill="none" stroke={shade(skin, 0.42)} strokeWidth="2" strokeLinecap="round" opacity="0.75" />
-              <path d="M94.5 85.5 C95.5 87.4 97.5 88.2 100 88.2 C102.5 88.2 104.5 87.4 105.5 85.5" fill="none" stroke={shade(skin, 0.45)} strokeWidth="1.8" strokeLinecap="round" opacity="0.8" />
-              <ellipse cx="101.5" cy="82.5" rx="3.4" ry="2.4" fill="#ffffff" opacity="0.16" />
-              <ellipse cx="100" cy="89.5" rx="6" ry="1.6" fill="#000000" opacity="0.10" />
+              {young ? (
+                /* smaller button nose */
+                <g>
+                  <path d="M100.5 74 C100 78 99.2 80.8 97.8 82.8" fill="none" stroke={shade(skin, 0.42)} strokeWidth="1.8" strokeLinecap="round" opacity="0.7" />
+                  <path d="M95.5 84.6 C96.5 86.2 98 87 100 87 C102 87 103.5 86.2 104.5 84.6" fill="none" stroke={shade(skin, 0.45)} strokeWidth="1.6" strokeLinecap="round" opacity="0.75" />
+                  <ellipse cx="101.2" cy="81.6" rx="3" ry="2.2" fill="#ffffff" opacity="0.16" />
+                  <ellipse cx="100" cy="88.4" rx="5" ry="1.4" fill="#000000" opacity="0.10" />
+                </g>
+              ) : (
+                <g>
+                  <path d="M100.5 70 C100 76 98.6 80.5 96.6 83.6" fill="none" stroke={shade(skin, 0.42)} strokeWidth="2" strokeLinecap="round" opacity="0.75" />
+                  <path d="M94.5 85.5 C95.5 87.4 97.5 88.2 100 88.2 C102.5 88.2 104.5 87.4 105.5 85.5" fill="none" stroke={shade(skin, 0.45)} strokeWidth="1.8" strokeLinecap="round" opacity="0.8" />
+                  <ellipse cx="101.5" cy="82.5" rx="3.4" ry="2.4" fill="#ffffff" opacity="0.16" />
+                  <ellipse cx="100" cy="89.5" rx="6" ry="1.6" fill="#000000" opacity="0.10" />
+                </g>
+              )}
 
               {/* ===== mouth ===== */}
-              <path d="M90 94 C95 98.6 105 98.6 110 94" fill="none" stroke={dark} strokeWidth="2.6" strokeLinecap="round" />
-              <path d="M92 92.4 C96 91.2 104 91.2 108 92.4" fill="none" stroke={shade(skin, 0.35)} strokeWidth="1.4" opacity="0.6" />
-              <path d="M93.5 99.6 C97.5 101.8 102.5 101.8 106.5 99.6" fill="none" stroke={tint(skin, 0.32)} strokeWidth="2.2" strokeLinecap="round" opacity="0.85" />
-              {/* chin crease */}
-              <path d="M95 106 C98 107.6 102 107.6 105 106" fill="none" stroke={shade(skin, 0.3)} strokeWidth="1.4" opacity="0.4" />
+              <path d={young ? "M89.5 92.5 C95 97.8 105 97.8 110.5 92.5" : "M90 94 C95 98.6 105 98.6 110 94"} fill="none" stroke={dark} strokeWidth="2.6" strokeLinecap="round" />
+              <path d={young ? "M92 90.9 C96 89.8 104 89.8 108 90.9" : "M92 92.4 C96 91.2 104 91.2 108 92.4"} fill="none" stroke={shade(skin, 0.35)} strokeWidth="1.4" opacity="0.6" />
+              <path d={young ? "M93 98.6 C97 100.9 103 100.9 107 98.6" : "M93.5 99.6 C97.5 101.8 102.5 101.8 106.5 99.6"} fill="none" stroke={tint(skin, 0.32)} strokeWidth="2.2" strokeLinecap="round" opacity="0.85" />
+              {/* chin crease (adults only) */}
+              {!young && <path d="M95 106 C98 107.6 102 107.6 105 106" fill="none" stroke={shade(skin, 0.3)} strokeWidth="1.4" opacity="0.4" />}
+
+              {/* rosy cheeks + a few freckles — teenage touch */}
+              {young && (
+                <g>
+                  <ellipse cx="77.5" cy="84" rx="7" ry="4.4" fill="#e2765f" opacity="0.24" transform="rotate(-8 77.5 84)" />
+                  <ellipse cx="122.5" cy="84" rx="7" ry="4.4" fill="#e2765f" opacity="0.24" transform="rotate(8 122.5 84)" />
+                  <g fill={shade(skin, 0.45)} opacity="0.4">
+                    <circle cx="92" cy="80.5" r="1" />
+                    <circle cx="96.5" cy="79" r="0.9" />
+                    <circle cx="103.5" cy="79" r="0.9" />
+                    <circle cx="108" cy="80.5" r="1" />
+                  </g>
+                </g>
+              )}
 
               {/* ===== beard ===== */}
               {beard === 1 && (

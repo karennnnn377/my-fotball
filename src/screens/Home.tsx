@@ -370,7 +370,7 @@ export function AboutScreen({ onBack }: { onBack: () => void }) {
               color="#b8860b"
               color2="#4a2f00"
               size={150}
-              look={{ skin: "#e8b487", hair: "#161311", hairStyle: 2, beard: 0, collar: 2, band: false }}
+              look={{ skin: "#e8b487", hair: "#161311", hairStyle: 2, beard: 0, collar: 2, band: false, young: true }}
             />
           </div>
           <div className="display relative mt-2 text-4xl font-bold" style={{ color: "#3c2703", textShadow: "0 1px 0 rgba(255,255,255,0.5)" }}>
