@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { DiffKey, Mode } from "./engine/types";
 import { LangProvider } from "./i18n";
-import { MenuScreen, DifficultyScreen, HowToScreen } from "./screens/Home";
+import { MenuScreen, DifficultyScreen, HowToScreen, AboutScreen } from "./screens/Home";
 import GameScreen from "./screens/Game";
 
 type Screen =
   | { name: "menu" }
   | { name: "howto" }
+  | { name: "about" }
   | { name: "difficulty"; mode: Mode }
   | { name: "game"; mode: Mode; difficulty: DiffKey | "random"; key: number };
 
@@ -31,9 +32,11 @@ function Shell() {
         <MenuScreen
           onMode={(m) => setScreen({ name: "difficulty", mode: m })}
           onHowTo={() => setScreen({ name: "howto" })}
+          onAbout={() => setScreen({ name: "about" })}
         />
       )}
       {screen.name === "howto" && <HowToScreen onBack={() => setScreen({ name: "menu" })} />}
+      {screen.name === "about" && <AboutScreen onBack={() => setScreen({ name: "menu" })} />}
       {screen.name === "difficulty" && (
         <DifficultyScreen
           mode={screen.mode}
