@@ -85,8 +85,7 @@ export interface Dict {
     subLine: string;
     creatorName: string;
     role: string;
-    ageYears: (n: number) => string;
-    fromCity: string;
+    roleLine: string;
     position: string;
     cardHint: string;
     stats: [string, string, string, string];
@@ -228,8 +227,7 @@ const EN: Dict = {
     subLine: "Every game has a maker. This one was built from scratch by a 13-year-old football nerd in Dubai.",
     creatorName: "KAREN",
     role: "DESIGNER & PROGRAMMER",
-    ageYears: (n) => `${n.toLocaleString("en-US")} YEARS OLD`,
-    fromCity: "FROM DUBAI",
+    roleLine: "DESIGNER & PROGRAMMER — 13, FROM DUBAI",
     position: "DEV",
     cardHint: "ONE-OF-ONE SIGNED CARD",
     stats: ["CODING", "GAME DESIGN", "FOOTBALL LOVE", "FOOTBALL IQ"],
@@ -371,8 +369,7 @@ const FA: Dict = {
     subLine: "هر بازی‌ای یک سازنده دارد؛ این بازی را یک فوتبال‌باز ۱۳ ساله در دبی از صفر ساخته است.",
     creatorName: "کارِن",
     role: "طراح و برنامه‌نویس",
-    ageYears: (n) => `${n.toLocaleString("fa-IR")} ساله`,
-    fromCity: "از دبی",
+    roleLine: "طراح و برنامه‌نویس — ۱۳ ساله از دبی",
     position: "DEV",
     cardHint: "کارت امضاشده — تک‌نسخه",
     stats: ["کدنویسی", "طراحی بازی", "عشق به فوتبال", "دانش فوتبال"],
@@ -514,8 +511,7 @@ const AR: Dict = {
     subLine: "لكل لعبة صانع؛ هذه اللعبة صنعها عاشق كرة قدم عمره ١٣ سنة من دبي، من الصفر.",
     creatorName: "كارِن",
     role: "المصمّم والمبرمج",
-    ageYears: (n) => `العمر ${n.toLocaleString("ar-EG")} سنة`,
-    fromCity: "من دبي",
+    roleLine: "المصمّم والمبرمج — ١٣ سنة من دبي",
     position: "DEV",
     cardHint: "بطاقة موقّعة — نسخة وحيدة",
     stats: ["البرمجة", "تصميم اللعبة", "حب كرة القدم", "ذكاء كرة القدم"],

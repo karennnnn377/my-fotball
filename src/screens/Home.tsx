@@ -313,11 +313,11 @@ export function HowToScreen({ onBack }: { onBack: () => void }) {
    Supervisor: Dr. Aghaei.
    ============================================================ */
 const KAREN_CARD: Player = {
-  id: "karen-dev-one-of-one", name: "Karen", countryId: "", clubIds: [],
+  id: "karen-signature-26", name: "Karen", countryId: "", clubIds: [],
   tier: 1, era: "modern", position: "MF",
 };
 const KAREN_AGE = 13;
-const KAREN_STATS = [99, 95, 97, 90]; // CODING • GAME DESIGN • FOOTBALL LOVE • FOOTBALL IQ
+const KAREN_STATS = [96, 100, 97, 98]; // CODING • GAME DESIGN • FOOTBALL LOVE • FOOTBALL IQ
 
 export function AboutScreen({ onBack }: { onBack: () => void }) {
   const { t } = useI18n();
@@ -362,10 +362,7 @@ export function AboutScreen({ onBack }: { onBack: () => void }) {
               </div>
               <div className="display mt-1 text-lg tracking-[0.2em]" style={{ color: "#5c3d05" }}>{a.position}</div>
             </div>
-            <div className="flex flex-col items-end gap-1">
-              <span className="display rounded bg-[#4a2f00]/90 px-2 py-0.5 text-[10px] tracking-[0.18em] text-[#ffd257]">{a.cardHint}</span>
-              <span className="display rounded bg-[#4a2f00]/70 px-2 py-0.5 text-[10px] tracking-[0.18em] text-[#ffe08a]">{a.fromCity}</span>
-            </div>
+            <span className="display rounded bg-[#4a2f00]/90 px-2 py-0.5 text-[10px] tracking-[0.18em] text-[#ffd257]">{a.cardHint}</span>
           </div>
           <div className="relative mt-3 flex justify-center">
             <Portrait player={KAREN_CARD} color="#b8860b" color2="#4a2f00" size={150} />
@@ -374,7 +371,7 @@ export function AboutScreen({ onBack }: { onBack: () => void }) {
             {a.creatorName}
           </div>
           <div className="display relative text-[11px] tracking-[0.22em]" style={{ color: "#5c3d05" }}>
-            {a.role} • {a.ageYears(KAREN_AGE)}
+            {a.roleLine}
           </div>
           <div className="relative mx-auto my-4 h-px w-4/5" style={{ background: "linear-gradient(90deg, transparent, #7a4a00, transparent)" }} />
           <div className="relative flex flex-col gap-2.5">
