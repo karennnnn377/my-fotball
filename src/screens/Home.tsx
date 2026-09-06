@@ -7,12 +7,12 @@ import { ArrowIcon, BallIcon, DifficultyBadge, GameButton, getBest, MuteToggle, 
 const MODE_KEYS: Mode[] = ["quiz", "national", "club"];
 
 /* ============================================================
-   KAREN — developer portrait, fully hand-drawn SVG (v2).
-   A 13-year-old boy: long black curtain-fringe hair flowing
-   down past the shoulders, big low-set eyes, rosy cheeks,
-   and a deep-teal blazer over a white tee. Warm golden
-   studio backdrop so the dark hair reads at any size.
-   No hash rolls, no props — this file IS the picture.
+   KAREN — developer portrait, fully hand-drawn SVG (v3).
+   A 13-year-old boy with a short, neat, modern textured crop
+   and a front quiff — no long or hanging hair. Big low-set
+   eyes, soft cheeks, and a deep-teal blazer over a white tee.
+   Warm golden studio backdrop so the dark hair reads at any
+   size. No hash rolls, no props — this file IS the picture.
    ============================================================ */
 export function KarenAvatar({ size = 150 }: { size?: number }) {
   const uid = useId().replace(/:/g, "");
@@ -71,20 +71,6 @@ export function KarenAvatar({ size = 150 }: { size?: number }) {
         <circle cx="100" cy="62" r="58" fill="#ffffff" opacity="0.18" />
         <ellipse cx="100" cy="196" rx="92" ry="30" fill="#5c3a08" opacity="0.25" />
 
-        {/* ===== long hair — one full mane behind everything ===== */}
-        <path
-          d="M100 12 C60 12 38 36 36 66 C35 90 40 108 38 128 C36 148 27 160 36 172 C44 183 58 182 64 172 C70 180 84 183 92 174 C96 183 108 183 114 175 C122 183 136 180 142 170 C152 177 163 168 161 154 C159 142 163 124 163 106 C163 88 166 74 164 62 C160 34 140 12 100 12 Z"
-          fill={`url(#${hairG})`} stroke={dark} strokeWidth="2.5"
-        />
-        {/* crown sheen arcs */}
-        <path d="M62 34 C78 20 122 20 138 34" stroke="#9aa3c9" strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.55" />
-        <path d="M52 52 C70 34 130 34 148 52" stroke="#7c86a8" strokeWidth="2.4" fill="none" strokeLinecap="round" opacity="0.4" />
-        {/* long strand lines running down both sides */}
-        <path d="M44 78 C42 108 46 140 42 162" stroke="#7c86a8" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.45" />
-        <path d="M156 78 C158 108 154 140 158 162" stroke="#7c86a8" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.45" />
-        <path d="M52 90 C50 118 54 146 50 168" stroke="#141021" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.55" />
-        <path d="M148 90 C150 118 146 146 150 168" stroke="#141021" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.55" />
-
         {/* ===== torso: deep-teal blazer over a white tee ===== */}
         <path d="M30 200 C34 158 56 138 80 130 L100 141 L120 130 C144 138 166 158 170 200 Z" fill={`url(#${jackG})`} stroke={dark} strokeWidth="3" />
         <path d="M30 200 C34 164 48 144 64 136 L60 200 Z" fill="#000000" opacity="0.18" />
@@ -109,14 +95,20 @@ export function KarenAvatar({ size = 150 }: { size?: number }) {
         <path d="M91 96 L91 130 C91 137 109 137 109 130 L109 96 Z" fill="#f5c79c" stroke={dark} strokeWidth="2.5" />
         <path d="M91 104 C96 112 104 112 109 104 L109 118 C104 125 96 125 91 118 Z" fill="#000000" opacity="0.15" />
 
+        {/* ===== ears (visible now that the hair is short) ===== */}
+        <ellipse cx="64.5" cy="70" rx="6.5" ry="9.5" fill="#f5c79c" stroke={dark} strokeWidth="2.4" />
+        <ellipse cx="135.5" cy="70" rx="6.5" ry="9.5" fill="#f5c79c" stroke={dark} strokeWidth="2.4" />
+        <path d="M62.5 66 C61 69.5 61 73.5 63 76.5" stroke="#d69c6c" strokeWidth="1.4" fill="none" opacity="0.8" />
+        <path d="M137.5 66 C139 69.5 139 73.5 137 76.5" stroke="#d69c6c" strokeWidth="1.4" fill="none" opacity="0.8" />
+
         {/* ===== round youthful head ===== */}
         <path d="M100 30 C121 30 134 46 134 66 C134 84 128 97 119 105 C113 111 107 114 100 114 C93 114 87 111 81 105 C72 97 66 84 66 66 C66 46 79 30 100 30 Z" fill={`url(#${skinG})`} stroke={dark} strokeWidth="3" />
         <ellipse cx="86" cy="50" rx="19" ry="10" fill="#ffffff" opacity="0.14" transform="rotate(-10 86 50)" />
         <path d="M127 52 C131 66 130 86 121 100 C117 106 111 111 105 113 C117 109 126 97 129 82 C131 70 130 60 127 52 Z" fill="#000000" opacity="0.07" />
 
-        {/* soft thin brows */}
-        <path d="M74.5 62.5 C79 59.2 88 59 92.5 61.6 C88 61 79.5 61.2 74.5 62.5 Z" fill="#241d2e" />
-        <path d="M107.5 61.6 C112 59 121 59.2 125.5 62.5 C120.5 61.2 112 61 107.5 61.6 Z" fill="#241d2e" />
+        {/* neat boyish brows */}
+        <path d="M74 62.8 C78.5 58.6 88.5 58.4 93 61.4 C88.5 60.6 79.5 60.8 74 62.8 Z" fill="#241d2e" transform="rotate(-2 83 60)" />
+        <path d="M107 61.4 C111.5 58.4 121.5 58.6 126 62.8 C120.5 60.8 111.5 60.6 107 61.4 Z" fill="#241d2e" transform="rotate(2 117 60)" />
 
         {/* big eyes set low — unmistakably young */}
         <ellipse cx="85" cy="74" rx="8.6" ry="6.9" fill="#ffffff" stroke={dark} strokeWidth="1.4" />
@@ -131,8 +123,6 @@ export function KarenAvatar({ size = 150 }: { size?: number }) {
         <circle cx="113.4" cy="76.4" r="0.65" fill="#ffffff" opacity="0.85" />
         <path d="M76.4 72.6 C80.4 68.2 89.6 68 93.4 72.4" fill="none" stroke={dark} strokeWidth="1.9" strokeLinecap="round" />
         <path d="M106.6 72.4 C110.4 68 119.6 68.2 123.6 72.6" fill="none" stroke={dark} strokeWidth="1.9" strokeLinecap="round" />
-        <path d="M76.1 72.2 L73.4 70.8" stroke={dark} strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M123.9 72.2 L126.6 70.8" stroke={dark} strokeWidth="1.5" strokeLinecap="round" />
         <path d="M78.8 78.8 C82.8 80.4 87.6 80.4 90.8 78.6" fill="none" stroke="#f6d3ac" strokeWidth="1.2" opacity="0.8" />
         <path d="M109.2 78.6 C112.4 80.4 117.2 80.4 121.2 78.8" fill="none" stroke="#f6d3ac" strokeWidth="1.2" opacity="0.8" />
 
@@ -148,31 +138,33 @@ export function KarenAvatar({ size = 150 }: { size?: number }) {
         <circle cx="87.6" cy="95.4" r="0.9" fill="#000000" opacity="0.2" />
         <circle cx="112.4" cy="95.4" r="0.9" fill="#000000" opacity="0.2" />
 
-        {/* rosy cheeks + freckles */}
-        <ellipse cx="75.5" cy="87" rx="7.5" ry="4.8" fill="#ef8d72" opacity="0.38" transform="rotate(-8 75.5 87)" />
-        <ellipse cx="124.5" cy="87" rx="7.5" ry="4.8" fill="#ef8d72" opacity="0.38" transform="rotate(8 124.5 87)" />
-        <g fill="#b97b4e" opacity="0.5">
+        {/* soft cheeks + a few freckles */}
+        <ellipse cx="75.5" cy="87" rx="7" ry="4.4" fill="#e58a6b" opacity="0.18" transform="rotate(-8 75.5 87)" />
+        <ellipse cx="124.5" cy="87" rx="7" ry="4.4" fill="#e58a6b" opacity="0.18" transform="rotate(8 124.5 87)" />
+        <g fill="#b97b4e" opacity="0.4">
           <circle cx="92" cy="84.5" r="1" />
           <circle cx="96.5" cy="83" r="0.9" />
           <circle cx="103.5" cy="83" r="0.9" />
           <circle cx="108" cy="84.5" r="1" />
-          <circle cx="88" cy="88" r="0.8" />
-          <circle cx="112" cy="88" r="0.8" />
         </g>
 
-        {/* ===== curtain fringe — natural part, falling over the forehead ===== */}
-        <path d="M104 30 C88 28 72 36 66 52 C63 62 62 72 64 82 C70 73 75 64 81 57 C88 49 96 43 104 41 Z" fill={`url(#${hairG})`} stroke={dark} strokeWidth="2.2" />
-        <path d="M104 30 C120 28 134 38 138 54 C140 65 140 76 136 86 C131 75 127 66 120 58 C113 50 108 43 104 41 Z" fill={`url(#${hairG})`} stroke={dark} strokeWidth="2.2" />
-        {/* long front locks framing the face, down to the collarbone */}
-        <path d="M66 54 C58 76 56 102 61 124 C64 138 68 148 75 154 C79 157 81 151 79 145 C72 126 71 100 76 76 C73 66 69 57 66 54 Z" fill={`url(#${hairG})`} stroke={dark} strokeWidth="2.2" />
-        <path d="M134 54 C142 76 144 102 139 124 C136 138 132 148 125 154 C121 157 119 151 121 145 C128 126 129 100 124 76 C127 66 131 57 134 54 Z" fill={`url(#${hairG})`} stroke={dark} strokeWidth="2.2" />
-        {/* sheen on fringe + locks */}
-        <path d="M74 44 C84 36 96 33 104 34" stroke="#9aa3c9" strokeWidth="2.2" fill="none" strokeLinecap="round" opacity="0.55" />
-        <path d="M112 35 C122 37 130 43 134 50" stroke="#9aa3c9" strokeWidth="2.2" fill="none" strokeLinecap="round" opacity="0.5" />
-        <path d="M66 70 C62 92 63 116 69 134" stroke="#7c86a8" strokeWidth="1.7" fill="none" strokeLinecap="round" opacity="0.5" />
-        <path d="M134 70 C138 92 137 116 131 134" stroke="#7c86a8" strokeWidth="1.7" fill="none" strokeLinecap="round" opacity="0.5" />
-        {/* stray strand between the curtains */}
-        <path d="M101 40 C99 48 99 55 101 62 C103 55 103 47 103 41 Z" fill="#141021" />
+        {/* ===== short boyish haircut — modern textured crop with a quiff ===== */}
+        {/* main top mass: voluminous crown, textured fringe, sides above the ears */}
+        <path
+          d="M64 56 C60 34 74 18 100 17 C126 18 140 34 136 56 C134 46 129 38 121 34 C123 40 122 46 119 50 C113 38 102 33 92 36 C95 41 95 47 93 51 C86 41 75 43 70 51 C68 53 66 55 64 56 Z"
+          fill={`url(#${hairG})`} stroke={dark} strokeWidth="2.2"
+        />
+        {/* front quiff swept up and to the side */}
+        <path d="M88 23 C93 13 110 11 119 19 C111 17 101 19 95 26 C92 25 90 24 88 23 Z" fill={`url(#${hairG})`} stroke={dark} strokeWidth="2" />
+        {/* short side patches ending above the ears */}
+        <path d="M63 50 C62 57 62 63 65 69 C68 64 68 56 67 50 C66 48 64 48 63 50 Z" fill={`url(#${hairG})`} stroke={dark} strokeWidth="1.8" />
+        <path d="M137 50 C138 57 138 63 135 69 C132 64 132 56 133 50 C134 48 136 48 137 50 Z" fill={`url(#${hairG})`} stroke={dark} strokeWidth="1.8" />
+        {/* hairline shadow on the forehead */}
+        <path d="M72 50 C82 42 118 42 128 50" stroke="#000000" strokeWidth="2" fill="none" opacity="0.12" />
+        {/* sheen strands across the styled top */}
+        <path d="M78 31 C90 22 112 22 124 31" stroke="#9aa3c9" strokeWidth="2.4" fill="none" strokeLinecap="round" opacity="0.55" />
+        <path d="M84 39 C94 32 108 32 118 38" stroke="#7c86a8" strokeWidth="1.8" fill="none" strokeLinecap="round" opacity="0.45" />
+        <path d="M92 16 C100 13 110 13 116 17" stroke="#9aa3c9" strokeWidth="1.6" fill="none" strokeLinecap="round" opacity="0.5" />
 
         {/* rim light */}
         <path d="M70 24 C58 36 52 50 51 64" stroke="rgba(255,255,255,0.35)" strokeWidth="3" fill="none" strokeLinecap="round" />
