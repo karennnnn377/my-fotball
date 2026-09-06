@@ -77,6 +77,28 @@ export interface Dict {
   chipNote: string;
   playAgain: string; changeDifficulty: string;
   streakTitle: (pct: number) => string;
+  /* ---- about the developer ---- */
+  about: {
+    menuBtn: string;
+    eyebrow: string;
+    heading: string;
+    subLine: string;
+    creatorName: string;
+    role: string;
+    ageYears: (n: number) => string;
+    fromCity: string;
+    position: string;
+    cardHint: string;
+    stats: [string, string, string, string];
+    supervisorLabel: string;
+    supervisorName: string;
+    supervisorRole: string;
+    phoneLabel: string;
+    phoneDisplay: string;
+    creditsTitle: string;
+    credits: { idea: string; code: string; art: string; supervision: string };
+    madeWith: string;
+  };
 }
 
 /* ================= ENGLISH ================= */
@@ -199,6 +221,27 @@ const EN: Dict = {
   chipNote: "CHIP EDGES SHOW EACH ROUND'S ROLLED DIFFICULTY",
   playAgain: "PLAY AGAIN", changeDifficulty: "CHANGE DIFFICULTY",
   streakTitle: (p) => `Streak bonus on next correct answer: +${p}%`,
+  about: {
+    menuBtn: "THE DEVELOPER",
+    eyebrow: "MATCHDAY LEGENDS • OFFICIAL CREDITS",
+    heading: "ABOUT THE DEVELOPER",
+    subLine: "Every game has a maker. This one was built from scratch by a 13-year-old football nerd in Dubai.",
+    creatorName: "KAREN",
+    role: "DESIGNER & PROGRAMMER",
+    ageYears: (n) => `${n.toLocaleString("en-US")} YEARS OLD`,
+    fromCity: "FROM DUBAI",
+    position: "DEV",
+    cardHint: "ONE-OF-ONE SIGNED CARD",
+    stats: ["CODING", "GAME DESIGN", "FOOTBALL LOVE", "FOOTBALL IQ"],
+    supervisorLabel: "SUPERVISOR",
+    supervisorName: "DR. AGHAEI",
+    supervisorRole: "Academic supervisor & project mentor",
+    phoneLabel: "SUPERVISOR'S PHONE",
+    phoneDisplay: "055 154 4988",
+    creditsTitle: "GAME CREDITS",
+    credits: { idea: "Idea & Design", code: "Programming", art: "Graphics & UI", supervision: "Supervision & Mentorship" },
+    madeWith: "Made with love for football — Dubai",
+  },
 };
 
 /* ================= فارسی ================= */
@@ -321,6 +364,27 @@ const FA: Dict = {
   chipNote: "لبهٔ رنگیِ هر کارت، سختیِ همان راند را نشان می‌دهد",
   playAgain: "بازی دوباره", changeDifficulty: "تغییر سختی",
   streakTitle: (p) => `پاداش زنجیره برای پاسخ درستِ بعدی: +${p.toLocaleString("fa-IR")}٪`,
+  about: {
+    menuBtn: "دربارهٔ سازنده",
+    eyebrow: "MATCHDAY LEGENDS • عوامل رسمی بازی",
+    heading: "دربارهٔ سازنده",
+    subLine: "هر بازی‌ای یک سازنده دارد؛ این بازی را یک فوتبال‌باز ۱۳ ساله در دبی از صفر ساخته است.",
+    creatorName: "کارِن",
+    role: "طراح و برنامه‌نویس",
+    ageYears: (n) => `${n.toLocaleString("fa-IR")} ساله`,
+    fromCity: "از دبی",
+    position: "DEV",
+    cardHint: "کارت امضاشده — تک‌نسخه",
+    stats: ["کدنویسی", "طراحی بازی", "عشق به فوتبال", "دانش فوتبال"],
+    supervisorLabel: "استاد راهنما",
+    supervisorName: "دکتر آقایی",
+    supervisorRole: "نظارت علمی و راهنمایی پروژه",
+    phoneLabel: "شمارهٔ تماس استاد",
+    phoneDisplay: "055 154 4988",
+    creditsTitle: "عوامل بازی",
+    credits: { idea: "ایده و طراحی", code: "برنامه‌نویسی", art: "گرافیک و رابط کاربری", supervision: "نظارت و راهنمایی" },
+    madeWith: "ساخته‌شده با عشق به فوتبال — دبی",
+  },
 };
 
 /* ================= العربية ================= */
@@ -443,6 +507,27 @@ const AR: Dict = {
   chipNote: "حواف البطاقات تُظهر صعوبة كل جولة",
   playAgain: "العب مجدداً", changeDifficulty: "تغيير الصعوبة",
   streakTitle: (p) => `مكافأة السلسلة للإجابة الصحيحة التالية: +${p.toLocaleString("ar-EG")}٪`,
+  about: {
+    menuBtn: "عن المطوّر",
+    eyebrow: "MATCHDAY LEGENDS • صُنّاع اللعبة",
+    heading: "عن المطوّر",
+    subLine: "لكل لعبة صانع؛ هذه اللعبة صنعها عاشق كرة قدم عمره ١٣ سنة من دبي، من الصفر.",
+    creatorName: "كارِن",
+    role: "المصمّم والمبرمج",
+    ageYears: (n) => `العمر ${n.toLocaleString("ar-EG")} سنة`,
+    fromCity: "من دبي",
+    position: "DEV",
+    cardHint: "بطاقة موقّعة — نسخة وحيدة",
+    stats: ["البرمجة", "تصميم اللعبة", "حب كرة القدم", "ذكاء كرة القدم"],
+    supervisorLabel: "المشرف",
+    supervisorName: "د. آقايي",
+    supervisorRole: "الإشراف العلمي وتوجيه المشروع",
+    phoneLabel: "رقم تواصل المشرف",
+    phoneDisplay: "055 154 4988",
+    creditsTitle: "صُنّاع اللعبة",
+    credits: { idea: "الفكرة والتصميم", code: "البرمجة", art: "الجرافيك والواجهة", supervision: "الإشراف والتوجيه" },
+    madeWith: "صُنعت بحب كرة القدم — دبي",
+  },
 };
 
 const DICTS: Record<Lang, Dict> = { en: EN, fa: FA, ar: AR };

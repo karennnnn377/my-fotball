@@ -1,9 +1,37 @@
-import { DIFFICULTY_CONFIG, DIFF_ORDER, DiffKey, Mode, ROUNDS_PER_GAME } from "../engine/types";
+import { DIFFICULTY_CONFIG, DIFF_ORDER, DiffKey, Mode, Player, ROUNDS_PER_GAME } from "../engine/types";
 import { CLUB_POOLS, dbStats, NATIONAL_TEAM_POOLS, questionPools } from "../engine/engine";
 import { LangSwitch, Rich, useI18n } from "../i18n";
 import { ArrowIcon, BallIcon, DifficultyBadge, GameButton, getBest, MuteToggle, sfx, TrophyIcon } from "../ui/Chrome";
+import Portrait from "../ui/Portrait";
 
 const MODE_KEYS: Mode[] = ["quiz", "national", "club"];
+
+function CardStarIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden>
+      <rect x="5" y="2.5" width="14" height="19" rx="2.5" fill="#ffd257" stroke="#0b1c3a" strokeWidth="1.8" />
+      <path d="M12 6.5 L13.6 9.9 L17.3 10.3 L14.5 12.8 L15.3 16.4 L12 14.6 L8.7 16.4 L9.5 12.8 L6.7 10.3 L10.4 9.9 Z" fill="#0b1c3a" />
+    </svg>
+  );
+}
+
+function WhistleIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden>
+      <path d="M3 10 H12 L14 7 H18 L16.5 11.5 C18.5 12.6 19.5 14.4 19.5 16 A6.5 6.5 0 0 1 6.5 16 C6.5 14.6 7.2 13.3 8.3 12.5 L3 12.5 Z"
+        fill="#ffd257" stroke="#0b1c3a" strokeWidth="1.8" strokeLinejoin="round" transform="rotate(-8 12 12)" />
+      <circle cx="12.5" cy="15.5" r="2" fill="#0b1c3a" />
+    </svg>
+  );
+}
+
+function PhoneIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden>
+      <path d="M5 3 H9 L11 8 L8.5 10.5 A12 12 0 0 0 13.5 15.5 L16 13 L21 15 V19 A2 2 0 0 1 19 21 A16 16 0 0 1 3 5 A2 2 0 0 1 5 3 Z" fill="currentColor" />
+    </svg>
+  );
+}
 
 function ModeIcon({ mode }: { mode: Mode }) {
   if (mode === "quiz") {
@@ -37,7 +65,7 @@ function ModeIcon({ mode }: { mode: Mode }) {
   );
 }
 
-export function MenuScreen({ onMode, onHowTo }: { onMode: (m: Mode) => void; onHowTo: () => void }) {
+export function MenuScreen({ onMode, onHowTo, onAbout }: { onMode: (m: Mode) => void; onHowTo: () => void; onAbout: () => void }) {
   const { t } = useI18n();
   const stats = dbStats();
   return (
@@ -89,14 +117,24 @@ export function MenuScreen({ onMode, onHowTo }: { onMode: (m: Mode) => void; onH
               </button>
             );
           })}
-          <button
-            onClick={() => { sfx.click(); onHowTo(); }}
-            className="mode-card plate flex items-center justify-center gap-2 rounded-xl px-5 py-3.5 anim-rise"
-            style={{ animationDelay: "280ms" }}
-          >
-            <TrophyIcon size={18} />
-            <span className="display text-sm tracking-[0.2em] text-ink">{t.howToPlay}</span>
-          </button>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <button
+              onClick={() => { sfx.click(); onHowTo(); }}
+              className="mode-card plate flex items-center justify-center gap-2 rounded-xl px-5 py-3.5 anim-rise"
+              style={{ animationDelay: "280ms" }}
+            >
+              <TrophyIcon size={18} />
+              <span className="display text-sm tracking-[0.2em] text-ink">{t.howToPlay}</span>
+            </button>
+            <button
+              onClick={() => { sfx.click(); onAbout(); }}
+              className="mode-card plate flex items-center justify-center gap-2 rounded-xl px-5 py-3.5 anim-rise"
+              style={{ animationDelay: "340ms", borderColor: "rgba(255,210,87,0.45)" }}
+            >
+              <CardStarIcon />
+              <span className="display text-sm tracking-[0.2em] text-gold-300" style={{ color: "var(--color-gold-300)" }}>{t.about.menuBtn}</span>
+            </button>
+          </div>
         </nav>
 
         {/* side panel */}
@@ -261,6 +299,153 @@ export function HowToScreen({ onBack }: { onBack: () => void }) {
       </div>
       <div className="mt-6 text-center">
         <GameButton color="#0aa05b" size="md" onClick={() => { sfx.click(); onBack(); }}>
+          {t.backToKickoff}
+        </GameButton>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   ABOUT THE DEVELOPER — the game's credits screen.
+   Karen, 13, from Dubai — presented as a one-of-one golden
+   player card in the same art style as the game itself.
+   Supervisor: Dr. Aghaei.
+   ============================================================ */
+const KAREN_CARD: Player = {
+  id: "karen-dev-one-of-one", name: "Karen", countryId: "", clubIds: [],
+  tier: 1, era: "modern", position: "MF",
+};
+const KAREN_AGE = 13;
+const KAREN_STATS = [99, 95, 97, 90]; // CODING • GAME DESIGN • FOOTBALL LOVE • FOOTBALL IQ
+
+export function AboutScreen({ onBack }: { onBack: () => void }) {
+  const { t } = useI18n();
+  const a = t.about;
+  const creditRows: [string, string][] = [
+    [a.credits.idea, a.creatorName],
+    [a.credits.code, a.creatorName],
+    [a.credits.art, a.creatorName],
+    [a.credits.supervision, a.supervisorName],
+  ];
+  return (
+    <div className="mx-auto w-full max-w-4xl px-4 py-6 md:py-12">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <button onClick={() => { sfx.click(); onBack(); }} className="flex items-center gap-2 text-sm text-ink-dim transition-colors hover:text-white">
+          <ArrowIcon size={16} /> <span className="display tracking-[0.2em]">{t.mainMenu}</span>
+        </button>
+        <LangSwitch />
+      </div>
+
+      <header className="anim-rise mb-8 text-center">
+        <span className="display rounded border border-pitch-line/25 bg-pitch-700/80 px-3 py-1 text-[11px] tracking-[0.25em] text-ink-dim">{a.eyebrow}</span>
+        <h1 className="display text-outline mt-3 text-4xl font-bold tracking-wide text-white md:text-5xl">{a.heading}</h1>
+        <p className="mx-auto mt-3 max-w-xl text-ink-dim">{a.subLine}</p>
+      </header>
+
+      <div className="grid items-start gap-6 lg:grid-cols-[320px_1fr]">
+        {/* ---- the one-of-one golden developer card ---- */}
+        <div
+          className="dev-card anim-pop relative mx-auto w-full max-w-[320px] overflow-hidden rounded-2xl p-5 text-center"
+          style={{
+            background: "linear-gradient(165deg, #f9e28c 0%, #ecc24c 28%, #c8962a 55%, #e9c766 78%, #f7dd8d 100%)",
+            border: "2px solid #8a5b00",
+            boxShadow: "0 22px 48px rgba(2,6,20,0.6), inset 0 2px 0 rgba(255,255,255,0.65), inset 0 -10px 24px rgba(122,74,0,0.35)",
+          }}
+        >
+          <div className="pointer-events-none absolute inset-0"
+            style={{ background: "linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.35) 46%, rgba(255,255,255,0.08) 54%, transparent 70%)" }} />
+          <div className="relative flex items-start justify-between">
+            <div className="text-start">
+              <div className="display text-6xl font-bold leading-none" style={{ color: "#4a2f00", textShadow: "0 2px 0 rgba(255,255,255,0.4)" }}>
+                {t.n(KAREN_AGE)}
+              </div>
+              <div className="display mt-1 text-lg tracking-[0.2em]" style={{ color: "#5c3d05" }}>{a.position}</div>
+            </div>
+            <div className="flex flex-col items-end gap-1">
+              <span className="display rounded bg-[#4a2f00]/90 px-2 py-0.5 text-[10px] tracking-[0.18em] text-[#ffd257]">{a.cardHint}</span>
+              <span className="display rounded bg-[#4a2f00]/70 px-2 py-0.5 text-[10px] tracking-[0.18em] text-[#ffe08a]">{a.fromCity}</span>
+            </div>
+          </div>
+          <div className="relative mt-3 flex justify-center">
+            <Portrait player={KAREN_CARD} color="#b8860b" color2="#4a2f00" size={150} />
+          </div>
+          <div className="display relative mt-2 text-4xl font-bold" style={{ color: "#3c2703", textShadow: "0 1px 0 rgba(255,255,255,0.5)" }}>
+            {a.creatorName}
+          </div>
+          <div className="display relative text-[11px] tracking-[0.22em]" style={{ color: "#5c3d05" }}>
+            {a.role} • {a.ageYears(KAREN_AGE)}
+          </div>
+          <div className="relative mx-auto my-4 h-px w-4/5" style={{ background: "linear-gradient(90deg, transparent, #7a4a00, transparent)" }} />
+          <div className="relative flex flex-col gap-2.5">
+            {a.stats.map((label, i) => (
+              <div key={label}>
+                <div className="display flex items-baseline justify-between text-[11px] tracking-[0.15em]" style={{ color: "#4a2f00" }}>
+                  <span className="font-bold">{t.n(KAREN_STATS[i])}</span>
+                  <span>{label}</span>
+                </div>
+                <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-[#4a2f00]/30">
+                  <div
+                    className="stat-bar-fill h-full rounded-full"
+                    style={{ width: `${KAREN_STATS[i]}%`, background: "linear-gradient(90deg, #7a4a00, #4a2f00)", animationDelay: `${300 + i * 140}ms` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ---- supervisor + credits ---- */}
+        <div className="flex flex-col gap-4">
+          <section className="glossy anim-rise rounded-xl p-6">
+            <div className="flex items-center gap-3">
+              <span className="rounded-lg border border-pitch-line/20 bg-pitch-900/70 p-2.5"><WhistleIcon /></span>
+              <div>
+                <div className="display text-[11px] tracking-[0.25em] text-gold-400" style={{ color: "var(--color-gold-400)" }}>{a.supervisorLabel}</div>
+                <h2 className="display text-2xl font-bold text-white md:text-3xl">{a.supervisorName}</h2>
+              </div>
+            </div>
+            <p className="mt-3 text-sm text-ink-dim">{a.supervisorRole}</p>
+            <div className="mt-4 flex flex-wrap items-center gap-3 rounded-lg border border-pitch-line/25 bg-pitch-900/70 p-4">
+              <span className="display text-[10px] tracking-[0.2em] text-ink-dim">{a.phoneLabel}</span>
+              <a
+                href="tel:+971551544988"
+                dir="ltr"
+                onClick={() => sfx.click()}
+                className="btn-game display ms-auto inline-flex items-center gap-2 rounded-lg px-4 py-2 text-base tracking-[0.12em] text-white"
+                style={{ background: "linear-gradient(180deg, #0aa05b, #0aa05bd0)", ["--shadow-bottom" as string]: "#064e2c" }}
+              >
+                <PhoneIcon />
+                {a.phoneDisplay}
+              </a>
+            </div>
+          </section>
+
+          <section className="glossy anim-rise rounded-xl p-6" style={{ animationDelay: "120ms" }}>
+            <h2 className="display mb-3 text-sm tracking-[0.25em] text-gold-400" style={{ color: "var(--color-gold-400)" }}>{a.creditsTitle}</h2>
+            <dl>
+              {creditRows.map(([label, name], i) => (
+                <div
+                  key={label}
+                  className="anim-rise flex items-baseline justify-between gap-4 border-b border-dashed border-pitch-line/20 py-2.5 last:border-0"
+                  style={{ animationDelay: `${220 + i * 90}ms` }}
+                >
+                  <dt className="text-sm text-ink-dim">{label}</dt>
+                  <dd className="display text-base font-semibold text-white">{name}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+
+          <p className="anim-rise flex items-center justify-center gap-2 text-center text-sm text-ink-dim" style={{ animationDelay: "320ms" }}>
+            <span className="anim-spin-slow inline-block"><BallIcon size={16} /></span>
+            {a.madeWith}
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-8 text-center">
+        <GameButton color="#2757a8" size="md" onClick={() => { sfx.click(); onBack(); }}>
           {t.backToKickoff}
         </GameButton>
       </div>
