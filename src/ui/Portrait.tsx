@@ -25,6 +25,18 @@ function mix(hex: string, target: number, f: number): string {
 const shade = (hex: string, f: number) => mix(hex, 0, f);
 const tint = (hex: string, f: number) => mix(hex, 255, f);
 
+/** Deterministic appearance overrides — used where a specific look is
+    required (e.g. the developer's one-of-one card). Everything else is
+    still derived from the player-id hash. */
+export interface PortraitLook {
+  skin?: string;
+  hair?: string;
+  hairStyle?: number; // 0..7
+  beard?: number;     // 0 none, 1 stubble, 2 goatee, 3 full
+  collar?: number;    // 0 v-neck, 1 crew, 2 polo
+  band?: boolean;     // headband
+}
+
 interface PortraitProps {
   player: Player;
   color: string;      // team primary colour — jersey base
@@ -34,22 +46,24 @@ interface PortraitProps {
   /** Mystery mode: neutral silhouette — used BEFORE the answer so the
       correct team's colours are never leaked. */
   mystery?: boolean;
+  /** Pin specific facial features instead of the id-hash roll. */
+  look?: PortraitLook;
 }
 
-export default function Portrait({ player, color, color2, size = 92, showName = false, mystery = false }: PortraitProps) {
+export default function Portrait({ player, color, color2, size = 92, showName = false, mystery = false, look }: PortraitProps) {
   const uid = useId().replace(/:/g, "");
   const h = hash(player.id);
 
-  const skin = SKIN[h % SKIN.length];
+  const skin = look?.skin ?? SKIN[h % SKIN.length];
   const skinHi = tint(skin, 0.38);
   const skinLo = shade(skin, 0.30);
-  const hairC = HAIR[(h >> 2) % HAIR.length];
+  const hairC = look?.hair ?? HAIR[(h >> 2) % HAIR.length];
   const hairHi = tint(hairC, 0.42);
   const eyeC = EYES[(h >> 5) % EYES.length];
-  const hairStyle = (h >> 4) % 8;
-  const beard = (h >> 7) % 4;
-  const collar = (h >> 9) % 3;
-  const band = (h >> 11) % 7 === 0;
+  const hairStyle = look?.hairStyle ?? (h >> 4) % 8;
+  const beard = look?.beard ?? (h >> 7) % 4;
+  const collar = look?.collar ?? (h >> 9) % 3;
+  const band = look?.band ?? (h >> 11) % 7 === 0;
 
   const jersey = color;
   const jerseyHi = tint(jersey, 0.32);

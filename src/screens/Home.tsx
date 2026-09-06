@@ -365,7 +365,13 @@ export function AboutScreen({ onBack }: { onBack: () => void }) {
             <span className="display rounded bg-[#4a2f00]/90 px-2 py-0.5 text-[10px] tracking-[0.18em] text-[#ffd257]">{a.cardHint}</span>
           </div>
           <div className="relative mt-3 flex justify-center">
-            <Portrait player={KAREN_CARD} color="#b8860b" color2="#4a2f00" size={150} />
+            <Portrait
+              player={KAREN_CARD}
+              color="#b8860b"
+              color2="#4a2f00"
+              size={150}
+              look={{ skin: "#e8b487", hair: "#161311", hairStyle: 2, beard: 0, collar: 2, band: false }}
+            />
           </div>
           <div className="display relative mt-2 text-4xl font-bold" style={{ color: "#3c2703", textShadow: "0 1px 0 rgba(255,255,255,0.5)" }}>
             {a.creatorName}
